@@ -58,6 +58,8 @@ const InputChat = () => {
         throw new Error("Empty Input!");
       }
 
+      toast('Inputting Info...', {position: "top-center"});
+
       // trim all string values to remove whitespace
       const inputTrim = input.trim();
       const locationTrim = location.trim();
@@ -122,7 +124,7 @@ const InputChat = () => {
 
   return (
     <div>
-      <div><Toaster position='top-right' /></div>
+      <div><Toaster position="top-center" /></div>
       <form onSubmit={handleSubmit} className="p-3 relative w-[22rem] md:w-[35rem] lg:w-[50rem]">
         <div className="rounded-xl flex flex-col justify-center">
           {step === 0 && (
