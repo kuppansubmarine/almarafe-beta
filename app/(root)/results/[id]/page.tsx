@@ -26,7 +26,7 @@ type Trial = {
 
 const get_results = async (searchID: String) => {
   try {
-    const response = await fetch('api/results', {
+    const response = await fetch('https://almarabeta.azurewebsites.net/api/results', {
       method: 'POST',
       credentials: 'include',
       headers: {
