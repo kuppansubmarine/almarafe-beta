@@ -81,7 +81,7 @@ const InputChat = () => {
 
 
       //make an API call to backend to begin Almara
-      const response = await fetch('api/start_almara', {
+      const response = await fetch('https://almarabeta.azurewebsites.net/api/start_almara', {
         method: 'POST',
         credentials: 'include',
         headers: {
