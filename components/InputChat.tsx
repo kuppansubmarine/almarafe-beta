@@ -208,7 +208,7 @@ const InputChat = () => {
                   className="bg-blue-500 py-2 px-6 text-white rounded-full hover:scale-95 hover:bg-blue-800 cursor-pointer transition-all duration-200 ease-in-out"
                 >
 
-                  <PaperAirplaneIcon className='h-5 w-5' />
+                  Next
                 </button>
               </div>
             </>
@@ -242,7 +242,7 @@ const InputChat = () => {
                   className="bg-blue-500 py-2 px-6 text-white rounded-full hover:scale-95 hover:bg-blue-800 cursor-pointer transition-all duration-200 ease-in-out"
                 >
 
-                  <PaperAirplaneIcon className='h-5 w-5' />
+                  Next
                 </button>
               </div>
             </>
@@ -276,7 +276,7 @@ const InputChat = () => {
                   className="bg-blue-500 py-2 px-6 text-white rounded-full hover:scale-95 hover:bg-blue-800 cursor-pointer transition-all duration-200 ease-in-out"
                 >
 
-                  <PaperAirplaneIcon className='h-5 w-5' />
+                  Next
                 </button>
               </div>
             </>
@@ -347,7 +347,7 @@ const InputChat = () => {
                     className="bg-blue-500 py-2 px-6 text-white rounded-full hover:scale-95 hover:bg-blue-800 cursor-pointer transition-all duration-200 ease-in-out"
                   >
 
-                    <PaperAirplaneIcon className='h-5 w-5' />
+                    Next
                   </button>
                 </div>
               </div>
@@ -386,7 +386,7 @@ const InputChat = () => {
                   className="bg-blue-500 py-2 px-6 text-white rounded-full hover:scale-95 hover:bg-blue-800 cursor-pointer transition-all duration-200 ease-in-out"
                 >
 
-                  <PaperAirplaneIcon className='h-5 w-5' />
+                  Next
                 </button>
               </div>
             </>
@@ -420,7 +420,7 @@ const InputChat = () => {
                   className="bg-blue-500 py-2 px-6 text-white rounded-full hover:scale-95 hover:bg-blue-800 cursor-pointer transition-all duration-200 ease-in-out"
                 >
 
-                  <PaperAirplaneIcon className='h-5 w-5' />
+                 Next
                 </button>
               </div>
             </>
@@ -455,7 +455,7 @@ const InputChat = () => {
                   className="bg-blue-500 py-2 px-6 text-white rounded-full hover:scale-95 hover:bg-blue-800 cursor-pointer transition-all duration-200 ease-in-out"
                 >
 
-                  <PaperAirplaneIcon className='h-5 w-5' />
+                  Next
                 </button>
               </div>
             </>
