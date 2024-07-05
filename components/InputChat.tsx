@@ -254,7 +254,7 @@ const InputChat = () => {
                 <MapIcon className="h-0 w-0 lg:h-6 lg:w-6 mr-2 text-[#67a2e1] flex-shrink-0" />
                 <h1 className="text-3xl mb-2 max-w-100 text-left  font-medium mt-3">How far are you willing to <span className='font-semibold'>travel</span>?</h1>
               </div>
-              <p className=" mb-2 max-w-96 text-left pb-10 text-gray-500 font-light">Please enter the miles you can travel from the location you entered.</p>
+              <p className=" mb-2 max-w-96 text-left pb-10 text-gray-500 font-light">Please enter the miles you can travel from the location you entered. ONLY TYPE the MILES NUMBER, don't type in "miles".</p>
               <input
                 type="number"
                 className="bg-gray-200/50 text-black h-12 focus:outline-none p-4 mb-5 rounded-2xl"
@@ -398,7 +398,7 @@ const InputChat = () => {
                 <CakeIcon className="h-0 w-0 lg:h-6 lg:w-6 mr-2 text-[#67a2e1] flex-shrink-0" />
                 <h1 className="text-3xl mb-2 max-w-100 text-left  font-medium mt-3">What is your <span className='font-semibold'>age</span>?</h1>
               </div>
-              <p className=" mb-2 max-w-96 text-left pb-10 text-gray-500 font-light">Some trials only allow patients in a certain age group.</p>
+              <p className=" mb-2 max-w-96 text-left pb-10 text-gray-500 font-light">Some trials only allow patients in a certain age group. ONLY TYPE your AGE NUMBER, don't type in "years".</p>
               <input
                 type="number"
                 className="bg-gray-200/50 text-black h-12 focus:outline-none p-4 mb-5 rounded-2xl"
