@@ -1,0 +1,99 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+ 
+}
+
+
+body {
+
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+.loader {
+  border: 10px solid #ebe8e8; /* Light grey */
+  border-top: 10px solid #61a8ff; /* Blue */
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: spin 3s linear infinite;
+  margin-top: 5px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* global.css */
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.hide-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+/* Add this CSS to style the buttons properly */
+.button-group {
+  display: flex;
+  gap: 0.5rem; /* Adjust the spacing between buttons */
+}
+
+.button-group button {
+  border-radius: 1.5rem; /* Adjust this value to match the desired roundness */
+  padding: 0.5rem 1rem; /* Ensure consistent padding */
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.button-group button.active {
+  background-color: #374151; /* Active background color */
+  color: white; /* Active text color */
+}
+
+.button-group button.inactive {
+  background-color: #f3f4f6; /* Inactive background color */
+  color: black; /* Inactive text color */
+}
+
+
+/* Add this CSS to your stylesheet or within a <style> tag in your component */
+.button-group {
+  display: flex;
+  gap: 0.5rem; /* Adjust the spacing between buttons */
+}
+
+.button-group button {
+  border-radius: 1.5rem; /* Adjust this value to match the desired roundness */
+  padding: 0.5rem 1rem; /* Ensure consistent padding */
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.button-group button.active {
+  background-color: #374151; /* Active background color */
+  color: white; /* Active text color */
+}
+
+.button-group button.inactive {
+  background-color: #f3f4f6; /* Inactive background color */
+  color: black; /* Inactive text color */
+}
