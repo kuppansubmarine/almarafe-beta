@@ -135,9 +135,9 @@ const TrialPage = async ({ params }: { params: { id: string; nctid: string } }) 
                 <h3 className="text-xl  font-semibold mb-3">Inclusion</h3>
                 <ul className="list-disc list-inside space-y-2">
                     {inclusion?.map((item, index) =>
-                        <div className="flex items-center py-3 md:max-w-2xl">
+                        <div className="flex items-center py-3 md:max-w-2xl" key={index}>
                             <SparklesIcon className='h-6  w-6 flex-grow-0 flex-shrink-0 mr-2  text-purple-700'/>
-                            <li className="flex flex-col" key={index}>{item}</li>
+                            <li className="flex flex-col">{item}</li>
                         </div>
                     )}
                 </ul>
@@ -146,9 +146,9 @@ const TrialPage = async ({ params }: { params: { id: string; nctid: string } }) 
                 <h3 className="text-xl font-semibold mt-10 mb-3">Exclusion</h3>
                 <ul className="list-disc list-inside space-y-2">
                 {exclusion?.map((item, index) =>
-                        <div className="flex items-center py-3 md:max-w-2xl">
+                        <div className="flex items-center py-3 md:max-w-2xl" key={index}>
                             <SparklesIcon className='h-6  w-6 flex-grow-0 flex-shrink-0 mr-2  text-purple-700'/>
-                            <li className="flex flex-col" key={index}>{item}</li>
+                            <li className="flex flex-col">{item}</li>
                         </div>
                     )}
                 </ul>
