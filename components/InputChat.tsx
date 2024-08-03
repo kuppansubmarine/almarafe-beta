@@ -140,7 +140,7 @@ const InputChat = () => {
         throw new Error(data[0].error);
 
       }
-      toast.success("Success!")
+      toast.success("Redirecting to Results Page!")
       const data = await response.json();
       const search_id = data['searchID']
       console.log(data)
