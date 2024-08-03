@@ -14,7 +14,7 @@ type Reasonings = {
 };
 
 type Trial = {
-    briefTitle: string;
+    brief_title: string;
     title: string;
     trial_text: string;
     phase: string;
@@ -123,7 +123,7 @@ const TrialPage = async ({ params }: { params: { id: string; nctid: string } }) 
 
                 <p className="md:text-xl font-semibold">Summary</p>
                 <div className="flex items-center mb-10 max-w-2xl">
-                    <p className="mt-3 text-gray-900"> {trial?.trial_text}</p>
+                    <p className="mt-3 text-gray-900"> {trial?.brief_summary}</p>
                 </div>
 
 
