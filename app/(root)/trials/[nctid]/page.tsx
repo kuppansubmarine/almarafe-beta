@@ -149,7 +149,7 @@ const TrialPage = async ({ params }: { params: { id: string; nctid: string } }) 
                     {inclusion?.map((item, index) =>
                         <li className="flex items-center py-3 md:max-w-2xl" key={index}>
                             <span className="bullet-point"></span>
-                            <span className="ml-2 font-medium text-sm">{item}</span>
+                            <span className="ml-2 text-sm">{item}</span>
                         </li>
                     )}
                 </ul>
@@ -162,7 +162,7 @@ const TrialPage = async ({ params }: { params: { id: string; nctid: string } }) 
                     {exclusion?.map((item, index) =>
                         <li className="flex items-center py-3 md:max-w-2xl" key={index}>
                             <span className="bullet-point"></span>
-                            <span className="ml-2 font-medium text-sm">{item}</span>
+                            <span className="ml-2  text-sm">{item}</span>
                         </li>
                     )}
                 </ul>
