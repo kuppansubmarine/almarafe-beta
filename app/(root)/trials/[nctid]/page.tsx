@@ -73,37 +73,49 @@ const TrialPage = async ({ params }: { params: { id: string; nctid: string } }) 
     let error = '';
 
 
-    
+
     try {
-      if (nctid) {
-        const result = await get_results(search_id, nctid);
-        if (result.status === 'processing') {
-          processing = true;
+        if (nctid) {
+            const result = await get_results(search_id, nctid);
+            if (result.status === 'processing') {
+                processing = true;
+            } else {
+                trial = result.data;
+            }
         } else {
-          trial = result.data;
+            error = 'Invalid search parameters!';
         }
-      } else {
-        error = 'Invalid search parameters!';
-      }
     } catch (err) {
-      error = 'Error fetching results!';
+        error = 'Error fetching results!';
     } finally {
-      if (processing) {
-        return <LoadingPage />;
-      }
-  
-      if (error) {
-        return <ErrorPage />;
-      }
-  
-      if (!trial) {
-        return <div className='bg-gray-100 h-screen text-black p-5'>No results found!</div>;
-      }
+        if (processing) {
+            return <LoadingPage />;
+        }
+
+        if (error) {
+            return <ErrorPage />;
+        }
+
+        if (!trial) {
+            return <div className='bg-gray-100 h-screen text-black p-5'>No results found!</div>;
+        }
     }
-      
+
     const studyLink = `https://clinicaltrials.gov/study/${trial?.NCTID}`;
-    const inclusion = trial?.inclusion?.split('\n').filter(item => item.trim() !== '' && !item.includes('Inclusion Criteria'));
-    const exclusion = trial?.exclusion?.split('\n').filter(item => item.trim() !== '' && !item.includes('Exclusion Criteria'));
+    const cleanLine = (line: string): string => {
+        return line
+            .replace(/^(?:\d+(\.\d+)*\.|\(i+\)|\(ii+\)|\-\s*|\([A-Za-z]+\)\s*)/, '')   // Remove leading numbers with periods, "i.", "ii.", "-", or "(any letter)" followed by whitespace
+            .replace(/[\\\*\u2022]/g, '')  // Remove backslashes, asterisks, and bullet points
+            .trim();
+    };
+
+    const inclusion = trial?.inclusion?.split('\n')
+        .map(cleanLine)
+        .filter(item => item !== '' && !item.includes('Inclusion Criteria'));
+
+    const exclusion = trial?.exclusion?.split('\n')
+        .map(cleanLine)
+        .filter(item => item !== '' && !item.includes('Exclusion Criteria'));
 
     return (
         <div className="min-h-screen bg-gray-50 p-8 flex items-start justify-center">
@@ -133,25 +145,28 @@ const TrialPage = async ({ params }: { params: { id: string; nctid: string } }) 
                     <span className="text-pink-800 text-2xl font-bold">Eligibility</span>
                 </div>
                 <h3 className="text-xl  font-semibold mb-3">Inclusion</h3>
-                <ul className="list-disc list-inside space-y-2">
+                <ul className="list-none space-y-2">
                     {inclusion?.map((item, index) =>
-                        <div className="flex items-center py-3 md:max-w-2xl" key={index}>
-                            <SparklesIcon className='h-6  w-6 flex-grow-0 flex-shrink-0 mr-2  text-purple-700'/>
-                            <li className="flex flex-col">{item}</li>
-                        </div>
+                        <li className="flex items-center py-3 md:max-w-2xl" key={index}>
+                            <span className="bullet-point"></span>
+                            <span className="ml-2 font-medium text-sm">{item}</span>
+                        </li>
                     )}
                 </ul>
+
+
 
 
                 <h3 className="text-xl font-semibold mt-10 mb-3">Exclusion</h3>
-                <ul className="list-disc list-inside space-y-2">
-                {exclusion?.map((item, index) =>
-                        <div className="flex items-center py-3 md:max-w-2xl" key={index}>
-                            <SparklesIcon className='h-6  w-6 flex-grow-0 flex-shrink-0 mr-2  text-purple-700'/>
-                            <li className="flex flex-col">{item}</li>
-                        </div>
+                <ul className="list-none space-y-2">
+                    {exclusion?.map((item, index) =>
+                        <li className="flex items-center py-3 md:max-w-2xl" key={index}>
+                            <span className="bullet-point"></span>
+                            <span className="ml-2 font-medium text-sm">{item}</span>
+                        </li>
                     )}
                 </ul>
+
 
                 <hr className="border-gray-200 mt-10 mb-10 border-2"></hr>
                 <div className="rounded-md px-3 py-2 inline-flex mr-3 mb-8 items-center0">

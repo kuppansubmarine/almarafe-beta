@@ -97,3 +97,20 @@ body {
   background-color: #f3f4f6; /* Inactive background color */
   color: black; /* Inactive text color */
 }
+
+.list-none {
+  padding-left: 0; /* Remove default padding */
+}
+
+.bullet-point {
+  height: 8px; /* Adjust size as needed */
+  width: 8px; /* Adjust size as needed */
+  background-color: #b58bf3; /* Dark grey color for the bullet point */
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0; /* Ensure bullet points do not shrink */
+}
+
+.ml-2 {
+  margin-left: 12px; /* Spacing between bullet and text */
+}
