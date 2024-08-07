@@ -120,6 +120,12 @@ const Trials = async ({ params, searchParams }: { params: { id: string }, search
       <h3 className='mb-3'> We have found <span className='font-bold'>{data?.length}</span> clinical trials. </h3>
       <p className='mb-6 text-sm px-10 text-center text-slate-500'>Disclaimer: These trials are ranked by relevancy. Subsequent pages may include less relevant trials.</p>
       <Toaster position='top-right' />
+
+      <div className=" border-2 bg-white rounded-sm p-10 w-full max-w-3xl mb-6 relative">
+        <h2 className="text-xl font-semibold mb-1">Filter</h2>
+      </div>
+
+
       {trials?.map((trial) => (
         <div key={trial.NCTID} className=" border-2 bg-white rounded-sm p-10 w-full max-w-3xl mb-6 relative">
           <h2 className="text-xl font-semibold mb-1">{trial?.osu_id}</h2>
