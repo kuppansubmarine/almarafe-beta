@@ -11,6 +11,7 @@ import ViewButton from '@/components/ViewButton';
 import AnalyzingPage from '@/components/Analyzing';
 import NoTrialsPage from '@/components/NoTrials';
 import PaginationControls from '@/components/PaginationControls';
+import { useRouter } from 'next/navigation'
 
 type Props = {
   search_id: string | null
@@ -26,7 +27,7 @@ type Trial = {
   osu_id: string;
 };
 
-const get_results = async (searchID: String) => {
+const get_results = async (searchID: string) => {
   try {
     const response = await fetch('https://almarabeta.azurewebsites.net/api/results', {
       method: 'POST',
@@ -53,8 +54,39 @@ const get_results = async (searchID: String) => {
   }
 };
 
+const filter_results = async (searchID: string, phase: string, treatment: string) => {
+  const requestBody = {
+    'searchID': searchID,
+    'phase': phase,
+    'type': treatment
+  };
+  if (phase == '' && treatment == '') {
+    window.location.reload();
+    return;
+  }
+  try {
+    const response = await fetch(`https://almarabeta.azurewebsites.net/api/filter`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestBody),
+    });
 
-const Trials = ({ params, searchParams }: { params: { id: string }, searchParams: { [key: string]: string | string[] | undefined }}) => {
+    if (!response.ok) {
+      const resp = await response.json();
+      toast.error("Couldn't process data!");
+      throw new Error(resp[0].error);
+    }
+
+    const resp = await response.json();
+    return resp;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const Trials = ({ params, searchParams }: { params: { id: string }, searchParams: { [key: string]: string | string[] | undefined } }) => {
 
   const [treatmentType, setTreatmentType] = useState('');
   const [phaseNum, setPhaseNum] = useState('');
@@ -63,20 +95,40 @@ const Trials = ({ params, searchParams }: { params: { id: string }, searchParams
   const [error, setError] = useState('');
 
   const { id: search_id } = params;
-  const page = searchParams['page'] ?? '1'
-  const per_page = searchParams['per_page'] ?? '10'
+  const page = searchParams['page'] ?? '1';
+  const per_page = searchParams['per_page'] ?? '10';
+  const router = useRouter()
 
-  const start = (Number(page) - 1) * Number(per_page)
-  const end = start + Number(per_page)
 
-  const handlePhaseChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setPhaseNum(e.target.value);
+  const start = (Number(page) - 1) * Number(per_page);
+  const end = start + Number(per_page);
+
+  const handlePhaseChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newPhaseNum = e.target.value;
+    setPhaseNum(newPhaseNum);
+
+    try {
+      const result = await filter_results(search_id, newPhaseNum, treatmentType);
+      setData(result);
+      router.push(`/results/${search_id}/?page=${1}&per_page=${per_page}`);
+    } catch (error) {
+      setError('Could not filter phase!');
+    }
   };
 
-  const handleTreatmentTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setTreatmentType(e.target.value);
+  const handleTreatmentTypeChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newTreatmentType = e.target.value;
+    setTreatmentType(newTreatmentType);
+
+    try {
+      const result = await filter_results(search_id, phaseNum, newTreatmentType);
+      setData(result);
+      router.push(`/results/${search_id}/?page=${1}&per_page=${per_page}`);
+    } catch (error) {
+      setError('Could not filter treatment type!');
+    }
   };
-  
+
   useEffect(() => {
     const fetchData = async () => {
       if (search_id) {
@@ -84,7 +136,7 @@ const Trials = ({ params, searchParams }: { params: { id: string }, searchParams
           const result = await get_results(search_id);
           if (result.status === 'processing') {
             setProcessing(true);
-          } else if (result.status == 'ready') {
+          } else if (result.status === 'ready') {
             setData(result.data);
             setProcessing(false);
           } else {
@@ -113,9 +165,7 @@ const Trials = ({ params, searchParams }: { params: { id: string }, searchParams
     );
   }
 
-  if (data && data.length === 0) {
-    return <NoTrialsPage />;
-  }
+
 
   const trials = data?.slice(start, end) || [];
 
@@ -126,39 +176,41 @@ const Trials = ({ params, searchParams }: { params: { id: string }, searchParams
       <p className='mb-6 text-sm px-10 text-center text-slate-500'>Disclaimer: These trials are ranked by relevancy. Subsequent pages may include less relevant trials.</p>
       <Toaster position='top-right' />
 
-      <div className="border-2 bg-white rounded-sm p-10 w-full max-w-3xl mb-6 relative">
-        <h2 className="text-xl font-semibold mb-1">Filter</h2>
-        <label className="block text-lg mb-2 font-medium">Phase</label>
-        <select
-          className="bg-gray-200/50 text-black h-10 focus:outline-none p-2 rounded-2xl text-sm mb-4"
-          value={phaseNum}
-          onChange={(e) => setPhaseNum(e.target.value)}>
-
-          <option value="">All</option>
-          <option value="I">I</option>
-          <option value="II">II</option>
-          <option value="III">III</option>
-          <option value="II/III">IV</option>
-          <option value="I/II">I/II</option>
-          <option value="II/III">II/III</option>
-          <option value="II/III">III/IV</option>
-        </select>
-
-        <label className="block text-lg mb-2 font-medium">Treatment Type</label>
-        <select
-          className="bg-gray-200/50 text-black h-10 focus:outline-none p-2 rounded-2xl text-sm mb-4"
-          value={treatmentType}
-          onChange={(e) => setTreatmentType(e.target.value)}>
-
-          <option value="">All</option>
-          <option value="Treatment">Treatment</option>
-          <option value="Screening">Screening</option>
-          <option value="Prevention">Prevention</option>
-          <option value="Diagnostic">Diagnostic</option>
-          <option value="Supportive Care">Supportive Care</option>
-          <option value="Health Services Research">Health Services Research</option>
-          <option value="Other">Other</option>
-        </select>
+      <div className="flex gap-10 justify-center w-full max-w-3xl mb-4 ">
+        <div className="flex flex-col">
+          <label className="block text-lg mb-2 font-medium">Phase</label>
+          <select
+            className="bg-white border-2 text-black h-10 focus:outline-none p-2 rounded-lg text-sm mb-4"
+            value={phaseNum}
+            onChange={handlePhaseChange}
+          >
+            <option value="">All</option>
+            <option value="I">I</option>
+            <option value="II">II</option>
+            <option value="III">III</option>
+            <option value="IV">IV</option>
+            <option value="I/II">I/II</option>
+            <option value="II/III">II/III</option>
+            <option value="III/IV">III/IV</option>
+          </select>
+        </div>
+        <div className="flex flex-col">
+          <label className="block text-lg mb-2 font-medium">Treatment Type</label>
+          <select
+            className="bg-white border-2 text-black h-10 focus:outline-none p-2 rounded-lg text-sm"
+            value={treatmentType}
+            onChange={handleTreatmentTypeChange}
+          >
+            <option value="">All</option>
+            <option value="Treatment">Treatment</option>
+            <option value="Screening">Screening</option>
+            <option value="Prevention">Prevention</option>
+            <option value="Diagnostic">Diagnostic</option>
+            <option value="Supportive Care">Supportive Care</option>
+            <option value="Health Services Research">Health Services Research</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
       </div>
 
       {trials.map((trial) => (
