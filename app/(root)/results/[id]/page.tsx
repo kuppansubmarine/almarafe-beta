@@ -10,7 +10,7 @@ import ViewButton from '@/components/ViewButton';
 import AnalyzingPage from '@/components/Analyzing';
 import NoTrialsPage from '@/components/NoTrials';
 import PaginationControls from '@/components/PaginationControls';
-
+import {useState} from 'react'
 
 
 
@@ -57,6 +57,10 @@ const get_results = async (searchID: String) => {
 };
 
 const Trials = async ({ params, searchParams }: { params: { id: string }, searchParams: {[key: string]: string | string[] | undefined }}) => {
+
+  const [treatmentType, setTreatmentType] = useState('');
+  const [phaseNum, setPhaseNum] = useState('');
+
   const { id: search_id } = params;
   const page = searchParams['page'] ?? '1'
   const per_page = searchParams['per_page'] ?? '10'
@@ -123,6 +127,36 @@ const Trials = async ({ params, searchParams }: { params: { id: string }, search
 
       <div className=" border-2 bg-white rounded-sm p-10 w-full max-w-3xl mb-6 relative">
         <h2 className="text-xl font-semibold mb-1">Filter</h2>
+        <label className="block text-lg mb-2 font-medium">Phase</label>
+            <select
+              className="bg-gray-200/50 text-black h-10 focus:outline-none p-2 rounded-2xl text-sm mb-4"
+              value={phaseNum}
+              onChange={(e) => setPhaseNum(e.target.value)}
+
+              <option value="" disabled>All</option>
+              <option value="I">I</option>
+              <option value="II">II</option>
+              <option value="III">III</option>
+              <option value="I & II">I & II</option>
+              <option value="I & III">I & III</option>
+              <option value="II & III">II & III</option>
+            </select>
+
+            <label className="block text-lg mb-2 font-medium">Treatment Type</label>
+            <select
+              className="bg-gray-200/50 text-black h-10 focus:outline-none p-2 rounded-2xl text-sm mb-4"
+              value={treatmentType}
+              onChange={(e) => setTreatmentType(e.target.value)}
+
+              <option value="" disabled>All</option>
+              <option value="Treatment">Treatment</option>
+              <option value="Screening">Screening</option>
+              <option value="Prevention">Prevention</option>
+              <option value="Diagnostic">Diagnostic</option>
+              <option value="Supportive Care">Supportive Care</option>
+              <option value="Health Services Research">Health Services Research</option>
+              <option value="Other">Other</option>
+            </select>
       </div>
 
 
