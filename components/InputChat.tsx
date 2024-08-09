@@ -9,7 +9,6 @@ import logo from '@/Images/ALMARALOGO.png';
 import AnalyzingPage from './Analyzing';
 import ErrorPage from './Error';
 
-
 const InputChat = () => {
   const [step, setStep] = useState(0);
   const [diseaseType, setDiseaseType] = useState(''); // To manage the type of disease
@@ -24,8 +23,6 @@ const InputChat = () => {
   const [sex, setSex] = useState('');
   const [ethnicity, setEthnicity] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-
-
 
   // Health Overview state variables
   const [biomarkers, setBiomarkers] = useState('');
@@ -44,6 +41,11 @@ const InputChat = () => {
   const topRef = useRef<HTMLDivElement>(null);
 
   const handleNextStep = () => {
+    // Validate required fields for step 1
+    if (step === 1 && (!condition || !age || !sex)) {
+      toast.error("Please fill in all required fields before proceeding!");
+      return; // Prevent moving to the next step if validation fails
+    }
     setStep(step + 1);
     if (topRef.current) {
       topRef.current.scrollIntoView({ behavior: 'smooth' });
@@ -71,22 +73,13 @@ const InputChat = () => {
   }
 
   const handleSubmit = async () => {
+    // Check for required fields
+    if (!condition || !age || !sex) {
+      toast.error("Please fill in all required fields!");
+      return; // Prevent form submission
+    }
 
     try {
-      // Check for required fields
-      if (!condition) {
-        toast.error("Fill in Condition!");
-        throw new Error("Empty Condition!");
-      }
-      if (!age) {
-        toast.error("Fill in Age!");
-        throw new Error("Empty Age!");
-      }
-      if (!sex) {
-        toast.error("Select your Biological Sex!");
-        throw new Error("Empty Biological Sex!");
-      }
-
       toast('Inputting Info...', { position: "top-center" });
 
       const inputTrim = input.trim();
@@ -186,7 +179,9 @@ const InputChat = () => {
               <UserCircleIcon className="mr-2 h-6 w-6 text-gray-500" /> General Information
             </h1>
             
-            <label className="block text-lg mb-2 font-medium">What is your condition?</label>
+            <p className="text-sm text-red-500 mb-4">* Indicates a required field</p>
+            
+            <label className="block text-lg mb-2 font-medium">What is your condition? <span className="text-red-500">*</span></label>
             <input
               type="text"
               className="bg-gray-200/50 text-black h-10 focus:outline-none p-4 mb-5 rounded-2xl text-sm"
@@ -196,7 +191,7 @@ const InputChat = () => {
               required
             />
             
-            <label className="block text-lg mb-2 font-medium">What is your age?</label>
+            <label className="block text-lg mb-2 font-medium">What is your age? <span className="text-red-500">*</span></label>
             <input
               type="number"
               className="bg-gray-200/50 text-black h-10 focus:outline-none p-4 mb-5 rounded-2xl text-sm"
@@ -206,7 +201,7 @@ const InputChat = () => {
               required
             />
             
-            <label className="block text-lg mb-2 font-medium">What is your biological sex?</label>
+            <label className="block text-lg mb-2 font-medium">What is your biological sex? <span className="text-red-500">*</span></label>
             <div className="button-group flex gap-2 mb-4">
               <button
                 type="button"
