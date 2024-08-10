@@ -1,6 +1,6 @@
 "use client"
 import React, { useState, useRef } from 'react';
-import { MagnifyingGlassIcon, UserCircleIcon, ArrowUturnLeftIcon } from '@heroicons/react/24/outline';
+import { MagnifyingGlassIcon, UserCircleIcon, ArrowUturnLeftIcon, EyeDropperIcon } from '@heroicons/react/24/outline';
 import { HeartIcon, ClipboardDocumentIcon } from '@heroicons/react/24/solid';
 import { useRouter } from 'next/navigation';
 import toast, { Toaster } from 'react-hot-toast';
@@ -39,7 +39,7 @@ const InputChat = () => {
   const [treatmentResponse, setTreatmentResponse] = useState('');
   const [adverseEffects, setAdverseEffects] = useState('');
   const [otherTreatment, setOtherTreatment] = useState('');
-
+  const [otherKeywords, setOtherKeywords] = useState('');
   const topRef = useRef<HTMLDivElement>(null);
 
   const handleNextStep = () => {
@@ -136,13 +136,13 @@ const InputChat = () => {
         ...(userType === 'Physician' && {
           'age': age,
           'sex': sex,
-          'otherConditions': otherConditions.trim(),
-          'patientNote': inputTrim,
+          'otherKeywords': otherKeywords.trim(),
+          'patient_info': inputTrim,
         })
       };
 
       console.log(requestBody);
-      setIsLoading(true);
+      setIsLoading(true);  
       const response = await fetch('https://almarabeta.azurewebsites.net/api/search', {
         method: 'POST',
         credentials: 'include',
@@ -155,18 +155,20 @@ const InputChat = () => {
         const data = await response.json();
         setError(true);
         toast.error("Couldn't process data!")
+        setIsLoading(false);
         throw new Error(data[0].error);
+       
       }
       toast.success("Redirecting to Results Page!")
       const data = await response.json();
       const search_id = data['searchID'];
       console.log(data);
+      setIsLoading(false);
       router.push(`/results/${search_id}`);
     } catch (error) {
+      setIsLoading(false);
       console.error('Error submitting the input:', error);
       setError(true);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -177,27 +179,28 @@ const InputChat = () => {
       ): error ? (
         <ErrorPage/>
       ) : (
-        <div className="flex flex-col  p-3 w-full max-w-4xl mx-auto">
+        <div className="flex flex-col p-3 w-full max-w-5xl mx-auto">
           <div ref={topRef}><Toaster position="top-center" /></div>
           <div className="rounded-xl flex flex-col justify-center">
             {step === 0 && (
-              <div className="flex flex-col items-center justify-center h-screen p-6">
+              <div className="flex flex-col items-center justify-center mt-48 mb-30 p-6">
                 <Image className="w-32 h-32 sm:w-40 sm:h-40" alt="logo" src={logo} priority></Image>
                 <h1 className="text-2xl text-center mb-2 font-medium mt-3">Let's Discover</h1>
                 <h1 className="text-2xl text-center mb-10 text-[#67a2e1] font-semibold">Clinical Trials</h1>
                 <button
                   type="button"
                   onClick={handleNextStep}
-                  className="flex items-center bg-base-100 justify-center mx-auto p-4 border-2 w-64 text-black text-base rounded-full hover:scale-95 cursor-pointer transition-all duration-200 ease-in-out"
+                  className="flex items-center bg-base-100 justify-center mx-auto p-4 border-2 w-64 text-black text-base rounded-full hover:scale-95 cursor-pointer transition-all mb-10 duration-200 ease-in-out"
                 >
                   Begin new search <MagnifyingGlassIcon className="h-5 ml-3" />
                 </button>
+              
               </div>
             )}
 
 
             {step === 1 && (
-              <div className="flex flex-col justify-center items-center h-screen p-6">
+              <div className="flex flex-col justify-center items-center mt-48 p-6">
                 <h1 className="text-2xl text-center mb-10 font-medium mt-3">Are you a</h1>
                 <div className="flex flex-col gap-6">
                   <button
@@ -295,7 +298,10 @@ const InputChat = () => {
 
             {step === 3 && userType === 'Physician' && (
               <div className="flex flex-col justify-center gap-3 mt-4 p-6">
-                <h1 className="text-2xl text-left pb-10 font-medium mt-8">Physician Information</h1>
+              <h1 className="text-2xl text-left pb-10 font-medium flex items-center mt-8">
+                <EyeDropperIcon className="mr-2 h-6 w-6 text-gray-500" /> Physician Mode
+              </h1>
+              
                 
                 <p className="text-sm text-red-500 mb-4">* Indicates a required field</p>
 
@@ -303,28 +309,28 @@ const InputChat = () => {
                 <input
                   type="text"
                   className="bg-gray-200/50 text-black h-10 focus:outline-none p-4 mb-5 rounded-2xl text-sm"
-                  placeholder="ex. Chronic Lymphocytic Leukemia"
+                  placeholder="ex. Breast Cancer"
                   value={condition}
                   onChange={(e) => setCondition(e.target.value)}
                   required
                 />
 
-                <label className="block text-lg mb-2 font-medium">Any other relevant terms or conditions? (optional)</label>
+                <label className="block text-lg mb-2 font-medium">Any other relevant terms or conditions? </label>
                 <input
                   type="text"
                   className="bg-gray-200/50 text-black h-10 focus:outline-none p-4 mb-5 rounded-2xl text-sm"
-                  placeholder="e.g., Autoimmune disorders"
-                  value={otherConditions}
-                  onChange={(e) => setOtherConditions(e.target.value)}
+                  placeholder="e.g., HER2"
+                  value={otherKeywords}
+                  onChange={(e) => setOtherKeywords(e.target.value)}
                 />
 
                 <div className="accordion">
                   <button onClick={toggleAccordion1} className="bg-gray-200 text-black py-2 px-4 rounded-lg">
-                    Demographics {isAccordionOpen1 ? '-' : '+'}
+                    Demographics (Optional) {isAccordionOpen1 ? '-' : '+'}
                   </button>
                   {isAccordionOpen1 && (
-                    <div className="accordion-content bg-gray-100 p-4 mt-2 rounded-lg">
-                      <label className="block text-lg mb-2 font-medium">Age (optional)</label>
+                    <div className="accordion-content p-4 mt-2 rounded-lg">
+                      <label className="block text-lg mb-2 font-medium">Age</label>
                       <input
                         type="number"
                         className="bg-gray-200/50 text-black h-10 focus:outline-none p-4 mb-5 rounded-2xl text-sm"
@@ -332,7 +338,7 @@ const InputChat = () => {
                         value={age}
                         onChange={(e) => setAge(e.target.value)}
                       />
-                      <label className="block text-lg mb-2 font-medium">Sex (optional)</label>
+                      <label className="block text-lg mb-2 font-medium">Sex</label>
                       <div className="button-group flex gap-2 mb-4">
                         <button
                           type="button"
@@ -357,11 +363,11 @@ const InputChat = () => {
 
                 <div className="accordion mt-4">
                   <button onClick={toggleAccordion2} className="bg-gray-200 text-black py-2 px-4 rounded-lg">
-                    Patient Note {isAccordionOpen2 ? '-' : '+'}
+                    Patient Note (Optional) {isAccordionOpen2 ? '-' : '+'}
                   </button>
                   {isAccordionOpen2 && (
-                    <div className="accordion-content bg-gray-100 p-4 mt-2 rounded-lg">
-                      <label className="block text-lg mb-2 font-medium">Patient Note (optional)</label>
+                    <div className="accordion-content p-4 mt-2 rounded-lg">
+                      <label className="block text-lg mb-2 font-medium">Patient Note</label>
                       <textarea
                         className="bg-gray-200/50 text-black h-72 w-full md:h-64 md:text-sm focus:outline-none mb-5 p-4 text-xs resize-none rounded-2xl"
                         placeholder="Enter any relevant information or notes..."
@@ -556,7 +562,7 @@ const InputChat = () => {
                 <button
                   type="button"
                   onClick={handlePrevStep}
-                  className="bg-gray-400 py-2 px-6 text-white rounded-full hover:scale-95 hover:bg-gray-800 cursor-pointer transition-all duration-200 ease-in-out"
+                  className="bg-gray-400 py-2 px-6 text-white rounded-full hover:scale-95 mb-10 hover:bg-gray-800 cursor-pointer transition-all duration-200 ease-in-out"
                 >
                   <ArrowUturnLeftIcon className='h-5 w-5 font-extrabold' />
                 </button>
@@ -565,7 +571,7 @@ const InputChat = () => {
                 <button
                   type="button"
                   onClick={handleNextStep}
-                  className="bg-blue-500 py-2 px-6 text-white rounded-full hover:scale-95 hover:bg-blue-800 cursor-pointer transition-all duration-200 ease-in-out"
+                  className="bg-blue-500 py-2 px-6 text-white rounded-full hover:scale-95 hover:bg-blue-800 cursor-pointer transition-all mb-10 duration-200 ease-in-out"
                 >
                   Next
                 </button>
@@ -574,7 +580,7 @@ const InputChat = () => {
                 <button
                   type="button"
                   onClick={handleSubmit}
-                  className="bg-blue-500 py-2 px-6 text-white rounded-full hover:scale-95 hover:bg-blue-800 cursor-pointer transition-all duration-200 ease-in-out"
+                  className="bg-blue-500 py-2 px-6 mb-10 text-white rounded-full hover:scale-95 hover:bg-blue-800 cursor-pointer transition-all duration-200 ease-in-out"
                 >
                   Submit
                 </button>
@@ -583,7 +589,7 @@ const InputChat = () => {
                 <button
                   type="button"
                   onClick={handleSubmit}
-                  className="bg-blue-500 py-2 px-6 text-white rounded-full hover:scale-95 hover:bg-blue-800 cursor-pointer transition-all duration-200 ease-in-out"
+                  className="bg-blue-500 py-2 px-6 mb-10 text-white rounded-full hover:scale-95 hover:bg-blue-800 cursor-pointer transition-all duration-200 ease-in-out"
                 >
                   Submit
                 </button>
@@ -593,12 +599,16 @@ const InputChat = () => {
 
           {step === 0 && (
   <>
-    <section className="flex flex-col items-center bg-transparent p-8 mb-4">
-      <Image src={missionImage} alt="Almara Team" width={400} height={400} className="mb-4" />
-      <h1 className="text-3xl font-bold text-center mb-4">Our Mission</h1>
+
+  <hr className="border-gray-300 mb-9" />
+
+    <section className="flex flex-col items-center bg-transparent p-8 mb-12">
+    <h1 className="text-3xl font-bold text-center mb-10">Our Mission</h1>
+      <Image src={missionImage} alt="Almara Team" width={400} height={400} className="mb-10" />
+      
       <p className="text-lg text-center">
-        Almara is a cutting-edge health tech startup, transforming clinical trials with a groundbreaking platform.
-        Our focus is on connecting patients with clinical trials while taking care to address healthcare disparities, especially
+        Almara is a group of undergraduate students from the Ohio State University looking to transform clinical trials with a groundbreaking platform.
+        The focus is on connecting patients with clinical trials while taking care to address healthcare disparities, especially
         in underprivileged communities.
       </p>
     </section>
@@ -606,14 +616,14 @@ const InputChat = () => {
     <hr className="border-gray-300" />
 
 
-    <section className="w-full p-8 bg-white rounded-lg mb-4 md:flex md:justify-between md:gap-10">
+    <section className="w-full p-8 bg-white rounded-lg mb-4 md:flex md:justify-between md:gap-20">
 
       <div className="md:w-1/2">
-        <h2 className="text-2xl font-bold text-center md:text-left mb-6">Choose Your Role</h2>
-        <div className="mb-6">
+        <h2 className="text-2xl font-bold text-center md:text-left mt-12 mb-6">Choose Your Role</h2>
+        <div className="mb-12">
           <h3 className="text-xl font-semibold text-blue-600">Patient Mode</h3>
           <p className="text-lg text-gray-700">
-            Patients can use the service to find clinical trials that match their condition and personal information, 
+            Patients can use the service to find clinical trials that match their condition and demographic information, 
             allowing them to explore potential treatment options tailored to their specific health needs.
           </p>
         </div>
@@ -626,9 +636,9 @@ const InputChat = () => {
         </div>
       </div>
 
-      <div className="md:w-1/2">
+      <div className="md:w-1/2 mt-12">
   <h2 className="text-2xl font-bold text-center md:text-left mb-6">Steps</h2>
-  <div className="flex flex-col gap-4">
+  <div className="flex flex-col gap-12">
     <div className="flex items-center md:flex-row">
       <span className="text-3xl font-bold text-blue-600 mr-4 md:mr-4">1</span>
       <p className="text-lg md:text-left">
@@ -638,7 +648,7 @@ const InputChat = () => {
     <div className="flex items-center md:flex-row">
       <span className="text-3xl font-bold text-blue-600 mr-4 md:mr-4">2</span>
       <p className="text-lg md:text-left">
-        <strong>Get Matched:</strong> Our platform uses advanced algorithms to match you with suitable clinical trials based on your provided information.
+        <strong>Get Matched:</strong> Our platform uses advanced algorithms and Artificial Intelligence to match you with suitable clinical trials based on your provided information.
       </p>
     </div>
     <div className="flex items-center md:flex-row">
@@ -656,15 +666,6 @@ const InputChat = () => {
 
 
 
-          <footer className="bg-gray-100 p-6 mt-10 w-full">
-            <div className="flex flex-col items-center w-full">
-              <Image src={logo} alt="Almara Logo" width={50} height={50} className="mb-2" />
-              <p className="text-center text-sm text-gray-600">&copy; 2024 Almara LLC. All Rights Reserved.</p>
-              <a href="mailto:contact@almara.tech" className="text-blue-500 text-sm mt-2 hover:underline">
-                contact@almara.tech
-              </a>
-            </div>
-          </footer>
         </div>
       )}
     </div>

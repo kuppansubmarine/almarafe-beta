@@ -27,7 +27,7 @@ const PaginationControls: FC<PaginationControlsProps> = (
     return (
         <div className="flex items-center justify-center gap-12">
             <button
-                className={`bg-[#dfe3e5] rounded-lg transition-all duration-200 text-black px-3 py-2 ${!hasPrevPage ? 'cursor-not-allowed opacity-15' : 'hover:bg-slate-300'}`}
+                className={`bg-[#dfe3e5] rounded-lg transition-all duration-200 text-black px-3  mb-10 py-2 ${!hasPrevPage ? 'cursor-not-allowed opacity-15' : 'hover:bg-slate-300'}`}
                 disabled={!hasPrevPage}
                 onClick={() => {
                     if (hasPrevPage) {
@@ -38,12 +38,12 @@ const PaginationControls: FC<PaginationControlsProps> = (
                 Back
             </button>
 
-            <div className="text-center text-lg font-semibold">
+            <div className="text-center text-lg mb-10 font-semibold">
                 {page} / {Math.ceil(dataLength / Number(per_page))}
             </div>
 
             <button
-                className={`bg-[#ba0c2f] text-white px-3 py-2 transition-all duration-200 rounded-lg ${!hasNextPage ? 'cursor-not-allowed opacity-25' : 'hover:bg-[#70071c]'}`}
+                className={`bg-[#ba0c2f] text-white px-3 py-2 transition-all duration-200 mb-10 rounded-lg ${!hasNextPage ? 'cursor-not-allowed opacity-25' : 'hover:bg-[#70071c]'}`}
                 disabled={!hasNextPage}
                 onClick={() => {
                     if (hasNextPage) {

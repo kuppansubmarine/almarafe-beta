@@ -8,10 +8,11 @@ const Layout = ({children}: {children: React.ReactNode}) => {
     return(
         
         <main className="root">
-           
-            <div className="root-container">
-                <div className="wrapper">
           
+            <div className="root-container">
+        
+                <div className="wrapper">
+            
                 {children}
                 
            
