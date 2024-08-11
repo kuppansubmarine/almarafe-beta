@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import toast, { Toaster } from 'react-hot-toast';
 import Image from "next/image";
 import logo from '@/Images/ALMARALOGO.png';
-import missionImage from '@/Images/AlmaraTeam.png';
+import missionImage from '@/Images/AlmaraTeam.jpeg';
 import AnalyzingPage from './Analyzing';
 import ErrorPage from './Error';
 
@@ -40,6 +40,9 @@ const InputChat = () => {
   const [adverseEffects, setAdverseEffects] = useState('');
   const [otherTreatment, setOtherTreatment] = useState('');
   const [otherKeywords, setOtherKeywords] = useState('');
+  const [PI, setPI] = useState('');
+  const [protocolID, setProtocolID] = useState('');
+  const [mode, setMode] = useState('');
   const topRef = useRef<HTMLDivElement>(null);
 
   const handleNextStep = () => {
@@ -69,6 +72,11 @@ const InputChat = () => {
     setSelectedType(type);
   }
 
+  const handleMode = (type: string) => {
+    setMode('hardFilter')
+  }
+
+
   const handleSexSelection = (selectedSex: string) => {
     setSex(selectedSex);
   }
@@ -90,10 +98,23 @@ const InputChat = () => {
   const toggleAccordion2 = () => setIsAccordionOpen2(!isAccordionOpen2);
 
   const handleSubmit = async () => {
-    if (!condition || (userType === 'Patient' && (!age || !sex))) {
+    if ((userType === 'Patient' && (!condition || !age || !sex))) {
       toast.error("Please fill in all required fields!");
       return;
     }
+
+    if (userType === 'Physician' && (!condition && !protocolID && !PI)){
+      toast.error("Condition or Protocol ID or PI must be filled in to search!");
+      return;
+    }
+
+    if (userType === 'Physician' && (condition && protocolID)){
+      toast.error("You can only search by Condition or Protocol ID, not both!");
+      return;
+    }
+
+
+
 
     try {
       toast('Inputting Info...', { position: "top-center" });
@@ -114,7 +135,6 @@ const InputChat = () => {
       const requestBody = {
         'userType': userType,
         'condition': conditionTrim,
-        'mode': userType.toLowerCase(), 
         ...(userType === 'Patient' && {
           'patient_id': "patient",
           'patient_info': inputTrim,
@@ -138,6 +158,8 @@ const InputChat = () => {
           'sex': sex,
           'otherKeywords': otherKeywords.trim(),
           'patient_info': inputTrim,
+          'protocolID': protocolID.trim(),
+          'pi': PI.trim(),
         })
       };
 
@@ -163,8 +185,8 @@ const InputChat = () => {
       const data = await response.json();
       const search_id = data['searchID'];
       console.log(data);
-      setIsLoading(false);
       router.push(`/results/${search_id}`);
+      setIsLoading(false);
     } catch (error) {
       setIsLoading(false);
       console.error('Error submitting the input:', error);
@@ -215,7 +237,7 @@ const InputChat = () => {
                     onClick={() => handleUserTypeSelection('Physician')}
                     className="flex items-center bg-base-100 justify-center mx-auto p-4 border-2 w-64 text-black text-base rounded-full hover:scale-95 cursor-pointer transition-all duration-200 ease-in-out"
                   >
-                    Physician
+                    Physician or Researcher
                   </button>
                 </div>
               </div>
@@ -298,14 +320,17 @@ const InputChat = () => {
 
             {step === 3 && userType === 'Physician' && (
               <div className="flex flex-col justify-center gap-3 mt-4 p-6">
-              <h1 className="text-2xl text-left pb-10 font-medium flex items-center mt-8">
+              <h1 className="text-2xl text-left mb-5  font-medium flex items-center mt-8">
                 <EyeDropperIcon className="mr-2 h-6 w-6 text-gray-500" /> Physician Mode
               </h1>
-              
-                
-                <p className="text-sm text-red-500 mb-4">* Indicates a required field</p>
 
-                <label className="block text-lg mb-2 font-medium">What is the patient's condition? <span className="text-red-500">*</span></label>
+               
+                
+          
+
+              
+
+                <label className="block text-lg mb-2 font-medium">What is the patient's condition? </label>
                 <input
                   type="text"
                   className="bg-gray-200/50 text-black h-10 focus:outline-none p-4 mb-5 rounded-2xl text-sm"
@@ -315,18 +340,38 @@ const InputChat = () => {
                   required
                 />
 
-                <label className="block text-lg mb-2 font-medium">Any other relevant terms or conditions? </label>
+                <label className="block text-lg mb-2 font-medium">Any other relevant terms? </label>
                 <input
                   type="text"
                   className="bg-gray-200/50 text-black h-10 focus:outline-none p-4 mb-5 rounded-2xl text-sm"
-                  placeholder="e.g., HER2"
+                  placeholder="ex. HER2, Stage IV"
                   value={otherKeywords}
                   onChange={(e) => setOtherKeywords(e.target.value)}
                 />
 
+<label className="block text-lg mb-2 font-medium">Protocol Number</label>
+                <input
+                  type="text"
+                  className="bg-gray-200/50 text-black h-10 focus:outline-none p-4 mb-5 max-w-md rounded-2xl text-sm"
+                  placeholder="ex. OSU-22167"
+                  value={protocolID}
+                  onChange={(e) => setProtocolID(e.target.value)}
+                />
+
+<label className="block text-lg mb-2 font-medium">Principal Investigator </label>
+                <input
+                  type="text"
+                  className="bg-gray-200/50 text-black h-10 focus:outline-none p-4 mb-5 max-w-md rounded-2xl text-sm"
+                  placeholder="Last Name, First name"
+                  value={PI}
+                  onChange={(e) => setPI(e.target.value)}
+                />
+
+                
+
                 <div className="accordion">
-                  <button onClick={toggleAccordion1} className="bg-gray-200 text-black py-2 px-4 rounded-lg">
-                    Demographics (Optional) {isAccordionOpen1 ? '-' : '+'}
+                  <button onClick={toggleAccordion1} className="border-2 text-black py-2 px-4 font-medium rounded-lg">
+                    Demographics {isAccordionOpen1 ? '-' : '+'}
                   </button>
                   {isAccordionOpen1 && (
                     <div className="accordion-content p-4 mt-2 rounded-lg">
@@ -361,9 +406,11 @@ const InputChat = () => {
                   )}
                 </div>
 
+              
+
                 <div className="accordion mt-4">
-                  <button onClick={toggleAccordion2} className="bg-gray-200 text-black py-2 px-4 rounded-lg">
-                    Patient Note (Optional) {isAccordionOpen2 ? '-' : '+'}
+                  <button onClick={toggleAccordion2} className="border-2 text-black py-2 font-medium px-4 rounded-lg">
+                    Patient Note {isAccordionOpen2 ? '-' : '+'}
                   </button>
                   {isAccordionOpen2 && (
                     <div className="accordion-content p-4 mt-2 rounded-lg">
