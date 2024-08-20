@@ -9,6 +9,8 @@ import logo from '@/Images/ALMARALOGO.png';
 import missionImage from '@/Images/AlmaraTeam.jpeg';
 import AnalyzingPage from './Analyzing';
 import ErrorPage from './Error';
+import Popup from './Popup';
+
 
 const InputChat = () => {
   const [step, setStep] = useState(0);
@@ -43,6 +45,10 @@ const InputChat = () => {
   const [PI, setPI] = useState('');
   const [protocolID, setProtocolID] = useState('');
   const [mode, setMode] = useState('');
+
+  const [popup, setPopup] = useState(false);
+
+
   const topRef = useRef<HTMLDivElement>(null);
 
   const handleNextStep = () => {
@@ -195,7 +201,9 @@ const InputChat = () => {
   };
 
   return (
+    <>
     <div>
+    <Popup />
       {isLoading ? (
         <AnalyzingPage />
       ): error ? (
@@ -716,6 +724,7 @@ const InputChat = () => {
         </div>
       )}
     </div>
+    </>
   );
 };
 

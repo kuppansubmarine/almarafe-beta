@@ -11,7 +11,7 @@ import ViewButton from '@/components/ViewButton';
 import AnalyzingPage from '@/components/Analyzing';
 import NoTrialsPage from '@/components/NoTrials';
 import PaginationControls from '@/components/PaginationControls';
-import { useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation';
 
 type Props = {
   search_id: string | null
@@ -170,6 +170,7 @@ const Trials = ({ params, searchParams }: { params: { id: string }, searchParams
   const trials = data?.slice(start, end) || [];
 
   return (
+    <>
     <div className="flex flex-col justify-center items-center min-h-screen bg-gray-50 p-4">
       <h1 className="text-3xl text-black-500 font-semibold mt-5 mb-2">Your Results</h1>
       <h3 className='mb-3'> We have found <span className='font-bold'>{data?.length}</span> clinical trials. </h3>
@@ -249,6 +250,7 @@ const Trials = ({ params, searchParams }: { params: { id: string }, searchParams
         <PaginationControls hasNextPage={end < (data ?? []).length} hasPrevPage={start > 0} searchID={search_id} dataLength={(data ?? []).length} />
       </div>
     </div>
+    </>
   );
 };
 
