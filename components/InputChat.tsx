@@ -9,33 +9,32 @@ import logo from '@/Images/ALMARALOGO.png';
 import missionImage from '@/Images/AlmaraTeam.jpeg';
 import AnalyzingPage from './Analyzing';
 import ErrorPage from './Error';
-import Popup from './Popup';
-
 
 const InputChat = () => {
   const [step, setStep] = useState(0);
-  const [userType, setUserType] = useState(''); 
-  const [diseaseType, setDiseaseType] = useState(''); 
-  const [selectedType, setSelectedType] = useState(''); 
-  const [isAccordionOpen1, setIsAccordionOpen1] = useState(false); 
+  const [userType, setUserType] = useState("");
+  const [general, setGeneral] = useState("");
+  const [diseaseType, setDiseaseType] = useState("");
+  const [selectedType, setSelectedType] = useState("");
+  const [isAccordionOpen1, setIsAccordionOpen1] = useState(false);
   const [isAccordionOpen2, setIsAccordionOpen2] = useState(false);
   const router = useRouter();
-  const [input, setInput] = useState('');
-  const [condition, setCondition] = useState('');
-  const [age, setAge] = useState('');
-  const [stage, setStage] = useState('');
+  const [input, setInput] = useState("");
+  const [condition, setCondition] = useState("");
+  const [age, setAge] = useState("");
+  const [stage, setStage] = useState("");
   const [error, setError] = useState(false);
-  const [email, setEmail] = useState('');
-  const [sex, setSex] = useState('');
-  const [ethnicity, setEthnicity] = useState('');
+  const [email, setEmail] = useState("");
+  const [sex, setSex] = useState("");
+  const [ethnicity, setEthnicity] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const [biomarkers, setBiomarkers] = useState('');
-  const [otherConditions, setOtherConditions] = useState('');
-  const [ecogScore, setEcogScore] = useState('');
-  const [previousCancer, setPreviousCancer] = useState('');
-  const [previousCancerType, setPreviousCancerType] = useState('');
-  const [previousCancerStage, setPreviousCancerStage] = useState('');
+  const [biomarkers, setBiomarkers] = useState("");
+  const [otherConditions, setOtherConditions] = useState("");
+  const [ecogScore, setEcogScore] = useState("");
+  const [previousCancer, setPreviousCancer] = useState("");
+  const [previousCancerType, setPreviousCancerType] = useState("");
+  const [previousCancerStage, setPreviousCancerStage] = useState("");
 
   const [treatmentTypes, setTreatmentTypes] = useState<string[]>([]);
   const [treatmentResponse, setTreatmentResponse] = useState('');
@@ -45,58 +44,100 @@ const InputChat = () => {
   const [PI, setPI] = useState('');
   const [protocolID, setProtocolID] = useState('');
   const [mode, setMode] = useState('');
-
-  const [popup, setPopup] = useState(false);
-
-
   const topRef = useRef<HTMLDivElement>(null);
 
+
+
   const handleNextStep = () => {
-    if (step === 2 && userType === 'Patient' && (!condition || !age || !sex)) {
+    if (step === 1 && userType === "Patient" && (!condition || !age || !sex)) {
       toast.error("Please fill in all required fields before proceeding!");
-      return; 
+      return;
     }
     setStep(step + 1);
     if (topRef.current) {
-      topRef.current.scrollIntoView({ behavior: 'smooth' });
+      topRef.current.scrollIntoView({ behavior: "smooth" });
     }
   };
+
+
 
   const handlePrevStep = () => {
-    if (step === 3 && userType === 'Physician') {
-      setStep(1); 
-    } else {
+  if (step === 1) {
+      setAge("");
+      setInput("");
+      setUserType(""); 
+      setCondition("");
+      setStage("");
+      setEmail("");
+      setSex("");
+      setEthnicity("");
+      setBiomarkers("");
+      setOtherConditions("");
+      setEcogScore("");
+      setPreviousCancer("");
+      setPreviousCancerType("");
+      setPreviousCancerStage("");
+      setTreatmentResponse("");
+      setAdverseEffects("");
+      setOtherTreatment("");
+      setOtherKeywords("");
+      setPI("");
+      setProtocolID("");
+
+    }
+
+  
+    if (step === 2 && userType === "Physician") {
+      setAge("");
+      setInput("");
+      setUserType(""); 
+      setCondition("");
+      setStage("");
+      setEmail("");
+      setSex("");
+      setEthnicity("");
+      setBiomarkers("");
+      setOtherConditions("");
+      setEcogScore("");
+      setPreviousCancer("");
+      setPreviousCancerType("");
+      setPreviousCancerStage("");
+      setTreatmentResponse("");
+      setAdverseEffects("");
+      setOtherTreatment("");
+      setOtherKeywords("");
+      setPI("");
+      setProtocolID("");
+      setStep(0);
+
+    } 
+    
+    
+    else {
       setStep(step - 1);
     }
+    
     if (topRef.current) {
-      topRef.current.scrollIntoView({ behavior: 'smooth' });
+      topRef.current.scrollIntoView({ behavior: "smooth" });
     }
   };
-
-  const handleTypeSelection = (type: string) => {
-    setDiseaseType(type);
-    setSelectedType(type);
-  }
-
-  const handleMode = (type: string) => {
-    setMode('hardFilter')
-  }
-
 
   const handleSexSelection = (selectedSex: string) => {
     setSex(selectedSex);
-  }
+  };
 
   const handleTreatmentTypeSelection = (type: string) => {
-    setTreatmentTypes(prev => prev.includes(type) ? prev.filter(t => t !== type) : [...prev, type]);
-  }
+    setTreatmentTypes((prev) =>
+      prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
+    );
+  };
 
   const handleUserTypeSelection = (type: string) => {
     setUserType(type);
-    if (type === 'Patient') {
-      setStep(2); 
-    } else if (type === 'Physician') {
-      setStep(3); 
+    if (type === "Patient") {
+      setStep(1);
+    } else if (type === "Physician") {
+      setStep(2);
     }
   };
 
@@ -104,26 +145,23 @@ const InputChat = () => {
   const toggleAccordion2 = () => setIsAccordionOpen2(!isAccordionOpen2);
 
   const handleSubmit = async () => {
-    if ((userType === 'Patient' && (!condition || !age || !sex))) {
+    if (userType === "Patient" && (!condition || !age || !sex)) {
       toast.error("Please fill in all required fields!");
       return;
     }
 
-    if (userType === 'Physician' && (!condition && !protocolID && !PI)){
+    if (userType === "Physician" && !condition && !protocolID && !PI) {
       toast.error("Condition or Protocol ID or PI must be filled in to search!");
       return;
     }
 
-    if (userType === 'Physician' && (condition && protocolID)){
+    if (userType === "Physician" && condition && protocolID) {
       toast.error("You can only search by Condition or Protocol ID, not both!");
       return;
     }
 
-
-
-
     try {
-      toast('Inputting Info...', { position: "top-center" });
+      toast("Inputting Info...", { position: "top-center" });
 
       const inputTrim = input.trim();
       const conditionTrim = condition.trim();
@@ -139,63 +177,69 @@ const InputChat = () => {
       setEmail("");
 
       const requestBody = {
-        'userType': userType,
-        'condition': conditionTrim,
-        ...(userType === 'Patient' && {
-          'patient_id': "patient",
-          'patient_info': inputTrim,
-          'email': emailTrim,
-          'stage': stageTrim,
-          'age': send_age,
-          'sex': sex,
-          'ethnicity': ethnicity,
-          'biomarkers': biomarkers.trim(),
-          'otherConditions': otherConditions.trim(),
-          'ecogScore': ecogScore,
-          'previousCancer': previousCancer,
-          'previousCancerType': previousCancerType.trim(),
-          'previousCancerStage': previousCancerStage,
-          'previousTreatments': treatmentTypes.includes('Other') ? [...treatmentTypes.filter(t => t !== 'Other'), otherTreatment.trim()] : treatmentTypes,
-          'treatmentResponse': treatmentResponse.trim(),
-          'adverseEffects': adverseEffects.trim()
+        userType: userType,
+        condition: conditionTrim,
+        ...(userType === "Patient" && {
+          patient_id: "patient",
+          patient_info: inputTrim,
+          email: emailTrim,
+          stage: stageTrim,
+          age: send_age,
+          sex: sex,
+          ethnicity: ethnicity,
+          biomarkers: biomarkers.trim(),
+          otherConditions: otherConditions.trim(),
+          ecogScore: ecogScore,
+          previousCancer: previousCancer,
+          previousCancerType: previousCancerType.trim(),
+          previousCancerStage: previousCancerStage,
+          previousTreatments: treatmentTypes.includes("Other")
+            ? [...treatmentTypes.filter((t) => t !== "Other"), otherTreatment.trim()]
+            : treatmentTypes,
+          treatmentResponse: treatmentResponse.trim(),
+          adverseEffects: adverseEffects.trim(),
         }),
-        ...(userType === 'Physician' && {
-          'age': age,
-          'sex': sex,
-          'otherKeywords': otherKeywords.trim(),
-          'patient_info': inputTrim,
-          'protocolID': protocolID.trim(),
-          'pi': PI.trim(),
-        })
+        ...(userType === "Physician" && {
+          age: age,
+          sex: sex,
+          otherKeywords: otherKeywords.trim(),
+          patient_info: inputTrim,
+          protocolID: protocolID.trim(),
+          pi: PI.trim(),
+        }),
+        ...((userType !== "Physician" && userType !== "Patient") && {
+          patient_id: "patient",
+          patient_info: inputTrim,
+          general: general.trim(),
+        }),
       };
 
       console.log(requestBody);
-      setIsLoading(true);  
-      const response = await fetch('https://almarabeta.azurewebsites.net/api/search', {
-        method: 'POST',
-        credentials: 'include',
+      setIsLoading(true);
+      const response = await fetch("https://almarabeta.azurewebsites.net/api/search", {
+        method: "POST",
+        credentials: "include",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(requestBody),
       });
       if (!response.ok) {
         const data = await response.json();
         setError(true);
-        toast.error("Couldn't process data!")
+        toast.error("Couldn't process data!");
         setIsLoading(false);
         throw new Error(data[0].error);
-       
       }
-      toast.success("Redirecting to Results Page!")
+      toast.success("Redirecting to Results Page!");
       const data = await response.json();
-      const search_id = data['searchID'];
+      const search_id = data["searchID"];
       console.log(data);
       router.push(`/results/${search_id}`);
       setIsLoading(false);
     } catch (error) {
       setIsLoading(false);
-      console.error('Error submitting the input:', error);
+      console.error("Error submitting the input:", error);
       setError(true);
     }
   };
@@ -206,119 +250,165 @@ const InputChat = () => {
     <Popup />
       {isLoading ? (
         <AnalyzingPage />
-      ): error ? (
-        <ErrorPage/>
+      ) : error ? (
+        <ErrorPage />
       ) : (
-        <div className="flex flex-col p-3 w-full max-w-5xl mx-auto">
-          <div ref={topRef}><Toaster position="top-center" /></div>
-          <div className="rounded-xl flex flex-col justify-center">
-            {step === 0 && (
-              <div className="flex flex-col items-center justify-center mt-48 mb-30 p-6">
-                <Image className="w-32 h-32 sm:w-40 sm:h-40" alt="logo" src={logo} priority></Image>
-                <h1 className="text-2xl text-center mb-2 font-medium mt-3">Let's Discover</h1>
-                <h1 className="text-2xl text-center mb-10 text-[#67a2e1] font-semibold">Clinical Trials</h1>
-                <button
-                  type="button"
-                  onClick={handleNextStep}
-                  className="flex items-center bg-base-100 justify-center mx-auto p-4 border-2 w-64 text-black text-base rounded-full hover:scale-95 cursor-pointer transition-all mb-10 duration-200 ease-in-out"
-                >
-                  Begin new search <MagnifyingGlassIcon className="h-5 ml-3" />
-                </button>
-              
+<div className="flex flex-col p-3 w-full max-w-5xl mx-auto">
+  <div ref={topRef}>
+    <Toaster position="top-center" />
+  </div>
+  <div className="rounded-xl flex flex-col justify-center">
+    {step === 0 && (
+      <div className="flex flex-col items-center justify-center mt-12 md:mt-24 mb-10 md:mb-30 p-6">
+        <h1 className="text-3xl md:text-6xl font-bold text-[#67a2e1]">Almara</h1>
+        <h2 className="text-base md:text-2xl text-gray-500 mt-2">AI Search Engine for Clinical Trials</h2>
+
+        <div className="flex flex-col items-center mt-10 w-full px-2 md:px-0">
+          <div className="relative w-full md:w-[50rem] mb-4">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <HeartIconSolid className="w-6 md:w-8 h-6 md:h-8 text-[#67a2e1]" />
+            </div>
+            <input
+              type="text"
+              className="bg-white border border-gray-300 focus:border-[#67a2e1] focus:ring-2 focus:ring-[#67a2e1] text-black h-10 md:h-12 w-full focus:outline-none pl-14 md:pl-16 pr-8 md:pr-12 rounded-xl text-sm md:text-lg transition duration-200"
+              placeholder="Search for Clinical Trials | Include more details for better results"
+              value={general}
+              onChange={(e) => setGeneral(e.target.value)}
+            />
+            {general && (
+              <div
+                className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
+                onClick={handleSubmit}
+              >
+                <MagnifyingGlassIcon className="h-5 md:h-6 w-5 md:w-6 text-blue-500" />
+              </div>
+            )}
+          </div>
+          <div className="flex gap-2 md:gap-4">
+        <div className="flex gap-4 md:gap-6">
+          <button
+            type="button"
+            onClick={() => handleUserTypeSelection("Patient")}
+            className="bg-white border border-gray-300 py-2 px-4 md:px-6 text-black rounded-full hover:scale-95 hover:bg-gray-200 cursor-pointer transition-all duration-200 ease-in-out flex items-center gap-2"
+          >
+            <FaUser className="text-xl" />
+            Patient Mode
+          </button>
+          <button
+            type="button"
+            onClick={() => handleUserTypeSelection("Physician")}
+            className="bg-white border border-gray-300 py-2 px-4 md:px-6 text-black rounded-full hover:scale-95 hover:bg-gray-200 cursor-pointer transition-all duration-200 ease-in-out flex items-center gap-2"
+          >
+            <FaUserMd className="text-xl" />
+            Physician Mode
+          </button>
+        </div>
+      </div>
+    </div>
               </div>
             )}
 
-
-            {step === 1 && (
-              <div className="flex flex-col justify-center items-center mt-48 p-6">
-                <h1 className="text-2xl text-center mb-10 font-medium mt-3">Are you a</h1>
-                <div className="flex flex-col gap-6">
-                  <button
-                    type="button"
-                    onClick={() => handleUserTypeSelection('Patient')}
-                    className="flex items-center bg-base-100 justify-center mx-auto p-4 border-2 w-64 text-black text-base rounded-full hover:scale-95 cursor-pointer transition-all duration-200 ease-in-out"
-                  >
-                    Patient
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleUserTypeSelection('Physician')}
-                    className="flex items-center bg-base-100 justify-center mx-auto p-4 border-2 w-64 text-black text-base rounded-full hover:scale-95 cursor-pointer transition-all duration-200 ease-in-out"
-                  >
-                    Physician or Researcher
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {step === 2 && userType === 'Patient' && (
+            {step === 1 && userType === "Patient" && (
               <div className="flex flex-col justify-center gap-3 mt-4 p-6">
-                <h1 className="text-2xl text-left pb-10 font-medium flex items-center mt-8">
-                  <UserCircleIcon className="mr-2 h-6 w-6 text-gray-500" /> General Information
+                <h1 className="text-xl md:text-2xl text-left pb-10 font-medium flex items-center mt-8">
+                  <UserCircleIcon className="mr-2 h-5 md:h-6 w-5 md:w-6 text-gray-500" /> General Information
                 </h1>
-                
-                <p className="text-sm text-red-500 mb-4">* Indicates a required field</p>
-                
-                <label className="block text-lg mb-2 font-medium">What is your condition? <span className="text-red-500">*</span></label>
+
+                <p className="text-xs md:text-sm text-red-500 mb-4">
+                  * Indicates a required field
+                </p>
+
+                <label className="block text-base md:text-lg mb-2 font-medium">
+                  What is your condition? <span className="text-red-500">*</span>
+                </label>
                 <input
                   type="text"
-                  className="bg-gray-200/50 text-black h-10 focus:outline-none p-4 mb-5 rounded-2xl text-sm"
+                  className="bg-gray-200/50 text-black h-8 md:h-10 focus:outline-none p-3 md:p-4 mb-5 rounded-2xl text-sm"
                   placeholder="ex. Chronic Lymphocytic Leukemia"
                   value={condition}
                   onChange={(e) => setCondition(e.target.value)}
                   required
                 />
-                
-                <label className="block text-lg mb-2 font-medium">What is your age? <span className="text-red-500">*</span></label>
+
+                <label className="block text-base md:text-lg mb-2 font-medium">
+                  What is your age? <span className="text-red-500">*</span>
+                </label>
                 <input
                   type="number"
-                  className="bg-gray-200/50 text-black h-10 focus:outline-none p-4 mb-5 rounded-2xl text-sm"
+                  className="bg-gray-200/50 text-black h-8 md:h-10 focus:outline-none p-3 md:p-4 mb-5 rounded-2xl text-sm"
                   placeholder="ex. 67"
                   value={age}
                   onChange={(e) => setAge(e.target.value)}
                   required
                 />
-                
-                <label className="block text-lg mb-2 font-medium">What is your biological sex? <span className="text-red-500">*</span></label>
+
+                <label className="block text-base md:text-lg mb-2 font-medium">
+                  What is your biological sex?{" "}
+                  <span className="text-red-500">*</span>
+                </label>
                 <div className="button-group flex gap-2 mb-4">
                   <button
                     type="button"
-                    onClick={() => handleSexSelection('Male')}
-                    className={`h-10 focus:outline-none p-4 rounded-2xl ${sex === 'Male' ? 'bg-gray-800 text-white' : 'bg-gray-200 text-black'}`}
+                    onClick={() => handleSexSelection("Male")}
+                    className={`h-8 md:h-10 focus:outline-none p-3 md:p-4 rounded-2xl ${
+                      sex === "Male"
+                        ? "bg-gray-800 text-white"
+                        : "bg-gray-200 text-black"
+                    }`}
                   >
                     Male
                   </button>
                   <button
                     type="button"
-                    onClick={() => handleSexSelection('Female')}
-                    className={`h-10 focus:outline-none p-4 rounded-2xl ${sex === 'Female' ? 'bg-gray-800 text-white' : 'bg-gray-200 text-black'}`}
+                    onClick={() => handleSexSelection("Female")}
+                    className={`h-8 md:h-10 focus:outline-none p-3 md:p-4 rounded-2xl ${
+                      sex === "Female"
+                        ? "bg-gray-800 text-white"
+                        : "bg-gray-200 text-black"
+                    }`}
                   >
                     Female
                   </button>
                 </div>
-                
-                <label className="block text-lg mb-2 font-medium">What is your ethnicity? (optional)</label>
+
+                <label className="block text-base md:text-lg mb-2 font-medium">
+                  What is your ethnicity? (optional)
+                </label>
                 <select
-                  className="bg-gray-200/50 text-black h-10 focus:outline-none p-2 rounded-2xl text-sm mb-4"
+                  className="bg-gray-200/50 text-black h-8 md:h-10 focus:outline-none p-2 md:p-2 rounded-2xl text-sm mb-4"
                   value={ethnicity}
                   onChange={(e) => setEthnicity(e.target.value)}
                 >
-                  <option value="" disabled>Select your ethnicity</option>
-                  <option value="American Indian or Alaska Native">American Indian or Alaska Native</option>
+                  <option value="" disabled>
+                    Select your ethnicity
+                  </option>
+                  <option value="American Indian or Alaska Native">
+                    American Indian or Alaska Native
+                  </option>
                   <option value="Asian">Asian</option>
                   <option value="Black">Black</option>
-                  <option value="Hispanic, Latino or Spanish origin">Hispanic, Latino or Spanish origin</option>
-                  <option value="Middle Eastern or North African">Middle Eastern or North African</option>
-                  <option value="Native Hawaiian or Other Pacific Islander">Native Hawaiian or Other Pacific Islander</option>
+                  <option value="Hispanic, Latino or Spanish origin">
+                    Hispanic, Latino or Spanish origin
+                  </option>
+                  <option value="Middle Eastern or North African">
+                    Middle Eastern or North African
+                  </option>
+                  <option value="Native Hawaiian or Other Pacific Islander">
+                    Native Hawaiian or Other Pacific Islander
+                  </option>
                   <option value="White">White</option>
-                  <option value="More than one race/ethnicity">More than one race/ethnicity</option>
+                  <option value="More than one race/ethnicity">
+                    More than one race/ethnicity
+                  </option>
                   <option value="Prefer not to say">Prefer not to say</option>
                 </select>
 
-                <label className="block text-lg mb-2 font-medium">What is your email? (optional)</label>
+                <label className="block text-base md:text-lg mb-2 font-medium">
+                  What is your email? (optional)
+                </label>
                 <input
                   type="email"
-                  className="bg-gray-200/50 text-black h-10 focus:outline-none p-4 mb-5 rounded-2xl text-sm"
+                  className="bg-gray-200/50 text-black h-8 md:h-10 focus:outline-none p-3 md:p-4 mb-5 rounded-2xl text-sm"
                   placeholder="ex. email@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -326,105 +416,121 @@ const InputChat = () => {
               </div>
             )}
 
-            {step === 3 && userType === 'Physician' && (
+            {step === 2 && userType === "Physician" && (
               <div className="flex flex-col justify-center gap-3 mt-4 p-6">
-              <h1 className="text-2xl text-left mb-5  font-medium flex items-center mt-8">
-                <EyeDropperIcon className="mr-2 h-6 w-6 text-gray-500" /> Physician Mode
-              </h1>
+                <h1 className="text-xl md:text-2xl text-left mb-5 font-medium flex items-center mt-8">
+                  <EyeDropperIcon className="mr-2 h-5 md:h-6 w-5 md:w-6 text-gray-500" /> Physician Mode
+                </h1>
 
-               
-                
-          
-
-              
-
-                <label className="block text-lg mb-2 font-medium">What is the patient's condition? </label>
+                <label className="block text-base md:text-lg mb-2 font-medium">
+                  What is the patient's condition?{" "}
+                </label>
                 <input
                   type="text"
-                  className="bg-gray-200/50 text-black h-10 focus:outline-none p-4 mb-5 rounded-2xl text-sm"
+                  className="bg-gray-200/50 text-black h-8 md:h-10 focus:outline-none p-3 md:p-4 mb-5 rounded-2xl text-sm"
                   placeholder="ex. Breast Cancer"
                   value={condition}
                   onChange={(e) => setCondition(e.target.value)}
                   required
                 />
 
-                <label className="block text-lg mb-2 font-medium">Any other relevant terms? </label>
+                <label className="block text-base md:text-lg mb-2 font-medium">
+                  Any other relevant terms?{" "}
+                </label>
                 <input
                   type="text"
-                  className="bg-gray-200/50 text-black h-10 focus:outline-none p-4 mb-5 rounded-2xl text-sm"
+                  className="bg-gray-200/50 text-black h-8 md:h-10 focus:outline-none p-3 md:p-4 mb-5 rounded-2xl text-sm"
                   placeholder="ex. HER2, Stage IV"
                   value={otherKeywords}
                   onChange={(e) => setOtherKeywords(e.target.value)}
                 />
 
-<label className="block text-lg mb-2 font-medium">Protocol Number</label>
+                <label className="block text-base md:text-lg mb-2 font-medium">
+                  Protocol Number
+                </label>
                 <input
                   type="text"
-                  className="bg-gray-200/50 text-black h-10 focus:outline-none p-4 mb-5 max-w-md rounded-2xl text-sm"
+                  className="bg-gray-200/50 text-black h-8 md:h-10 focus:outline-none p-3 md:p-4 mb-5 max-w-md rounded-2xl text-sm"
                   placeholder="ex. OSU-22167"
                   value={protocolID}
                   onChange={(e) => setProtocolID(e.target.value)}
                 />
 
-<label className="block text-lg mb-2 font-medium">Principal Investigator </label>
+                <label className="block text-base md:text-lg mb-2 font-medium">
+                  Principal Investigator{" "}
+                </label>
                 <input
                   type="text"
-                  className="bg-gray-200/50 text-black h-10 focus:outline-none p-4 mb-5 max-w-md rounded-2xl text-sm"
+                  className="bg-gray-200/50 text-black h-8 md:h-10 focus:outline-none p-3 md:p-4 mb-5 max-w-md rounded-2xl text-sm"
                   placeholder="Last Name, First name"
                   value={PI}
                   onChange={(e) => setPI(e.target.value)}
                 />
 
-                
-
                 <div className="accordion">
-                  <button onClick={toggleAccordion1} className="border-2 text-black py-2 px-4 font-medium rounded-lg">
-                    Demographics {isAccordionOpen1 ? '-' : '+'}
+                  <button
+                    onClick={toggleAccordion1}
+                    className="border-2 text-black py-2 px-4 font-medium rounded-lg"
+                  >
+                    Demographics {isAccordionOpen1 ? "-" : "+"}
                   </button>
                   {isAccordionOpen1 && (
                     <div className="accordion-content p-4 mt-2 rounded-lg">
-                      <label className="block text-lg mb-2 font-medium">Age</label>
+                      <label className="block text-base md:text-lg mb-2 font-medium">
+                        Age
+                      </label>
                       <input
                         type="number"
-                        className="bg-gray-200/50 text-black h-10 focus:outline-none p-4 mb-5 rounded-2xl text-sm"
+                        className="bg-gray-200/50 text-black h-8 md:h-10 focus:outline-none p-3 md:p-4 mb-5 rounded-2xl text-sm"
                         placeholder="ex. 67"
                         value={age}
                         onChange={(e) => setAge(e.target.value)}
                       />
-                      <label className="block text-lg mb-2 font-medium">Sex</label>
+                      <label className="block text-base md:text-lg mb-2 font-medium">
+                        Sex
+                      </label>
                       <div className="button-group flex gap-2 mb-4">
                         <button
                           type="button"
-                          onClick={() => handleSexSelection('Male')}
-                          className={`h-10 focus:outline-none p-4 rounded-2xl ${sex === 'Male' ? 'bg-gray-800 text-white' : 'bg-gray-200 text-black'}`}
+                          onClick={() => handleSexSelection("Male")}
+                          className={`h-8 md:h-10 focus:outline-none p-3 md:p-4 rounded-2xl ${
+                            sex === "Male"
+                              ? "bg-gray-800 text-white"
+                              : "bg-gray-200 text-black"
+                          }`}
                         >
                           Male
                         </button>
                         <button
                           type="button"
-                          onClick={() => handleSexSelection('Female')}
-                          className={`h-10 focus:outline-none p-4 rounded-2xl ${sex === 'Female' ? 'bg-gray-800 text-white' : 'bg-gray-200 text-black'}`}
+                          onClick={() => handleSexSelection("Female")}
+                          className={`h-8 md:h-10 focus:outline-none p-3 md:p-4 rounded-2xl ${
+                            sex === "Female"
+                              ? "bg-gray-800 text-white"
+                              : "bg-gray-200 text-black"
+                          }`}
                         >
                           Female
                         </button>
                       </div>
-
-                      
                     </div>
                   )}
                 </div>
 
-              
-
                 <div className="accordion mt-4">
-                  <button onClick={toggleAccordion2} className="border-2 text-black py-2 font-medium px-4 rounded-lg">
-                    Patient Note {isAccordionOpen2 ? '-' : '+'}
+                  <button
+                    onClick={toggleAccordion2}
+                    className="border-2 text-black py-2 font-medium px-4 rounded-lg"
+                  >
+                    Patient Note {isAccordionOpen2 ? "-" : "+"}
                   </button>
                   {isAccordionOpen2 && (
                     <div className="accordion-content p-4 mt-2 rounded-lg">
-                      <label className="block text-lg mb-2 font-medium">Patient Note</label>
+                      <label className="block text-base md:text-lg mb-2 font-medium">
+                        Patient Note
+                      </label>
                       <textarea
-                        className="bg-gray-200/50 text-black h-72 w-full md:h-64 md:text-sm focus:outline-none mb-5 p-4 text-xs resize-none rounded-2xl"
+                        className="bg-gray-200/50 text-black h-40 md:h-72 w-full md:text-sm focus:outline-none mb-5 p-3 md:p-4 text-xs resize-none rounded-2xl"
                         placeholder="Enter any relevant information or notes..."
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
@@ -435,51 +541,66 @@ const InputChat = () => {
               </div>
             )}
 
-            {step === 3 && userType === 'Patient' && (
+            {step === 2 && userType === "Patient" && (
               <div className="flex flex-col justify-center gap-3 mt-4 p-6">
-                <h1 className="text-2xl text-left pb-10 font-medium flex items-center mt-8">
-                <HeartIcon className="mr-2 h-6 w-6 text-red-500" /> Health Overview
+                <h1 className="text-xl md:text-2xl text-left pb-10 font-medium flex items-center mt-8">
+                  <HeartIconSolid className="mr-2 h-5 md:h-6 w-5 md:w-6 text-red-500" /> Health
+                  Overview
                 </h1>
-                
-                <label className="block text-lg mb-2 font-medium">What is your current stage condition?</label>
+
+                <label className="block text-base md:text-lg mb-2 font-medium">
+                  What is your current stage condition?
+                </label>
                 <select
-                  className="bg-gray-200/50 text-black h-10 focus:outline-none p-2 rounded-2xl text-sm mb-4"
+                  className="bg-gray-200/50 text-black h-8 md:h-10 focus:outline-none p-2 md:p-2 rounded-2xl text-sm mb-4"
                   value={stage}
                   onChange={(e) => setStage(e.target.value)}
                 >
-                  <option value="" disabled>Select your stage</option>
+                  <option value="" disabled>
+                    Select your stage
+                  </option>
                   <option value="Stage 0">Stage 0</option>
                   <option value="Stage I">Stage I</option>
                   <option value="Stage II">Stage II</option>
                   <option value="Stage III">Stage III</option>
                   <option value="Stage IV">Stage IV</option>
                 </select>
-                
-                <label className="block text-lg mb-2 font-medium">Are there any biomarkers or genetic mutations associated with the cancer (e.g., BRCA, EGFR, HER2)?</label>
+
+                <label className="block text-base md:text-lg mb-2 font-medium">
+                  Are there any biomarkers or genetic mutations associated with
+                  the cancer (e.g., BRCA, EGFR, HER2)?
+                </label>
                 <input
                   type="text"
-                  className="bg-gray-200/50 text-black h-10 focus:outline-none p-4 mb-5 rounded-2xl text-sm"
+                  className="bg-gray-200/50 text-black h-8 md:h-10 focus:outline-none p-3 md:p-4 mb-5 rounded-2xl text-sm"
                   placeholder="e.g., BRCA, EGFR, HER2"
                   value={biomarkers}
                   onChange={(e) => setBiomarkers(e.target.value)}
                 />
-                
-                <label className="block text-lg mb-2 font-medium">Any other significant health conditions (Ex. Autoimmune disorders)</label>
+
+                <label className="block text-base md:text-lg mb-2 font-medium">
+                  Any other significant health conditions (Ex. Autoimmune
+                  disorders)
+                </label>
                 <input
                   type="text"
-                  className="bg-gray-200/50 text-black h-10 focus:outline-none p-4 mb-5 rounded-2xl text-sm"
+                  className="bg-gray-200/50 text-black h-8 md:h-10 focus:outline-none p-3 md:p-4 mb-5 rounded-2xl text-sm"
                   placeholder="e.g., Autoimmune disorders"
                   value={otherConditions}
                   onChange={(e) => setOtherConditions(e.target.value)}
                 />
-                
-                <label className="block text-lg mb-2 font-medium">What is your Ecog score?</label>
+
+                <label className="block text-base md:text-lg mb-2 font-medium">
+                  What is your Ecog score?
+                </label>
                 <select
-                  className="bg-gray-200/50 text-black h-10 focus:outline-none p-2 rounded-2xl text-sm mb-4"
+                  className="bg-gray-200/50 text-black h-8 md:h-10 focus:outline-none p-2 md:p-2 rounded-2xl text-sm mb-4"
                   value={ecogScore}
                   onChange={(e) => setEcogScore(e.target.value)}
                 >
-                  <option value="" disabled>Select your Ecog score</option>
+                  <option value="" disabled>
+                    Select your Ecog score
+                  </option>
                   <option value="0">0</option>
                   <option value="1">1</option>
                   <option value="2">2</option>
@@ -487,42 +608,58 @@ const InputChat = () => {
                   <option value="4">4</option>
                   <option value="5">5</option>
                 </select>
-                
-                <label className="block text-lg mb-2 font-medium">Have you been previously diagnosed with other cancer?</label>
+
+                <label className="block text-base md:text-lg mb-2 font-medium">
+                  Have you been previously diagnosed with other cancer?
+                </label>
                 <div className="button-group flex gap-2 mb-4">
                   <button
                     type="button"
-                    onClick={() => setPreviousCancer('Yes')}
-                    className={`h-10 focus:outline-none p-4 rounded-2xl ${previousCancer === 'Yes' ? 'bg-gray-800 text-white' : 'bg-gray-200 text-black'}`}
+                    onClick={() => setPreviousCancer("Yes")}
+                    className={`h-8 md:h-10 focus:outline-none p-3 md:p-4 rounded-2xl ${
+                      previousCancer === "Yes"
+                        ? "bg-gray-800 text-white"
+                        : "bg-gray-200 text-black"
+                    }`}
                   >
                     Yes
                   </button>
                   <button
                     type="button"
-                    onClick={() => setPreviousCancer('No')}
-                    className={`h-10 focus:outline-none p-4 rounded-2xl ${previousCancer === 'No' ? 'bg-gray-800 text-white' : 'bg-gray-200 text-black'}`}
+                    onClick={() => setPreviousCancer("No")}
+                    className={`h-8 md:h-10 focus:outline-none p-3 md:p-4 rounded-2xl ${
+                      previousCancer === "No"
+                        ? "bg-gray-800 text-white"
+                        : "bg-gray-200 text-black"
+                    }`}
                   >
                     No
                   </button>
                 </div>
-                
-                {previousCancer === 'Yes' && (
+
+                {previousCancer === "Yes" && (
                   <>
-                    <label className="block text-lg mb-2 font-medium">What type of cancer?</label>
+                    <label className="block text-base md:text-lg mb-2 font-medium">
+                      What type of cancer?
+                    </label>
                     <input
                       type="text"
-                      className="bg-gray-200/50 text-black h-10 focus:outline-none p-4 mb-5 rounded-2xl text-sm"
+                      className="bg-gray-200/50 text-black h-8 md:h-10 focus:outline-none p-3 md:p-4 mb-5 rounded-2xl text-sm"
                       placeholder="e.g., Lung Cancer"
                       value={previousCancerType}
                       onChange={(e) => setPreviousCancerType(e.target.value)}
                     />
-                    <label className="block text-lg mb-2 font-medium">What was the stage?</label>
+                    <label className="block text-base md:text-lg mb-2 font-medium">
+                      What was the stage?
+                    </label>
                     <select
-                      className="bg-gray-200/50 text-black h-10 focus:outline-none p-2 rounded-2xl text-sm mb-4"
+                      className="bg-gray-200/50 text-black h-8 md:h-10 focus:outline-none p-2 md:p-2 rounded-2xl text-sm mb-4"
                       value={previousCancerStage}
                       onChange={(e) => setPreviousCancerStage(e.target.value)}
                     >
-                      <option value="" disabled>Select the stage</option>
+                      <option value="" disabled>
+                        Select the stage
+                      </option>
                       <option value="Stage 0">Stage 0</option>
                       <option value="Stage I">Stage I</option>
                       <option value="Stage II">Stage II</option>
@@ -534,22 +671,33 @@ const InputChat = () => {
               </div>
             )}
 
-            {step === 4 && userType === 'Patient' && (
+            {step === 3 && userType === "Patient" && (
               <div className="flex flex-col justify-center gap-3 mt-4 p-6">
-                <h1 className="text-2xl text-left pb-10 font-medium flex items-center mt-8">
-                    <ClipboardDocumentIcon className="mr-2 h-6 w-6 text-gray-500" />
-                    <span>Previous Treatments</span>
+                <h1 className="text-xl md:text-2xl text-left pb-10 font-medium flex items-center mt-8">
+                  <ClipboardDocumentIcon className="mr-2 h-5 md:h-6 w-5 md:w-6 text-gray-500" />
+                  <span>Previous Treatments</span>
                 </h1>
-                
-                <label className="block text-lg mb-2 font-medium">Have you received any of the following treatments? Check all that apply</label>
+
+                <label className="block text-base md:text-lg mb-2 font-medium">
+                  Have you received any of the following treatments? Check all
+                  that apply
+                </label>
                 <div className="flex flex-col gap-2 mb-5">
-                  {['Chemotherapy', 'Immunotherapy', 'Surgery', 'Radiation', 'Targeted Cancer Therapy'].map(treatment => (
+                  {[
+                    "Chemotherapy",
+                    "Immunotherapy",
+                    "Surgery",
+                    "Radiation",
+                    "Targeted Cancer Therapy",
+                  ].map((treatment) => (
                     <label key={treatment} className="inline-flex items-center">
                       <input
                         type="checkbox"
                         className="form-checkbox"
                         checked={treatmentTypes.includes(treatment)}
-                        onChange={() => handleTreatmentTypeSelection(treatment)}
+                        onChange={() =>
+                          handleTreatmentTypeSelection(treatment)
+                        }
                       />
                       <span className="ml-2">{treatment}</span>
                     </label>
@@ -558,39 +706,44 @@ const InputChat = () => {
                     <input
                       type="checkbox"
                       className="form-checkbox"
-                      checked={treatmentTypes.includes('Other')}
-                      onChange={() => handleTreatmentTypeSelection('Other')}
+                      checked={treatmentTypes.includes("Other")}
+                      onChange={() => handleTreatmentTypeSelection("Other")}
                     />
                     <span className="ml-2">Other</span>
                   </label>
-                  {treatmentTypes.includes('Other') && (
+                  {treatmentTypes.includes("Other") && (
                     <input
                       type="text"
-                      className="bg-gray-200/50 text-black h-10 focus:outline-none p-4 mb-5 rounded-2xl text-sm"
+                      className="bg-gray-200/50 text-black h-8 md:h-10 focus:outline-none p-3 md:p-4 mb-5 rounded-2xl text-sm"
                       placeholder="Please specify"
                       value={otherTreatment}
                       onChange={(e) => setOtherTreatment(e.target.value)}
                     />
                   )}
                 </div>
-                
+
                 {treatmentTypes.length > 0 && (
                   <>
-                    <label className="block text-lg mb-2 font-medium">How did the cancer respond to previous treatments?</label>
+                    <label className="block text-base md:text-lg mb-2 font-medium">
+                      How did the cancer respond to previous treatments?
+                    </label>
                     <input
                       type="text"
-                      className="bg-gray-200/50 text-black h-10 focus:outline-none p-4 mb-5 rounded-2xl text-sm"
+                      className="bg-gray-200/50 text-black h-8 md:h-10 focus:outline-none p-3 md:p-4 mb-5 rounded-2xl text-sm"
                       placeholder="e.g., Stable, Improved"
                       value={treatmentResponse}
                       onChange={(e) => setTreatmentResponse(e.target.value)}
                     />
                   </>
                 )}
-                
-                <label className="block text-lg mb-2 font-medium">Do you have any adverse effects or allergies to certain treatments?</label>
+
+                <label className="block text-base md:text-lg mb-2 font-medium">
+                  Do you have any adverse effects or allergies to certain
+                  treatments?
+                </label>
                 <input
                   type="text"
-                  className="bg-gray-200/50 text-black h-10 focus:outline-none p-4 mb-5 rounded-2xl text-sm"
+                  className="bg-gray-200/50 text-black h-8 md:h-10 focus:outline-none p-3 md:p-4 mb-5 rounded-2xl text-sm"
                   placeholder="e.g., Nausea, Rash"
                   value={adverseEffects}
                   onChange={(e) => setAdverseEffects(e.target.value)}
@@ -598,13 +751,17 @@ const InputChat = () => {
               </div>
             )}
 
-            {step === 5 && userType === 'Patient' && (
+            {step === 4 && userType === "Patient" && (
               <div className="flex flex-col justify-center gap-3 mt-4 p-6">
-                <h1 className="text-2xl text-left pb-10 font-medium mt-8">Additional Information (Optional)</h1>
-                
-                <label className="block text-lg mb-2 font-medium">Any other relevant information to improve match precision</label>
+                <h1 className="text-xl md:text-2xl text-left pb-10 font-medium mt-8">
+                  Additional Information (Optional)
+                </h1>
+
+                <label className="block text-base md:text-lg mb-2 font-medium">
+                  Any other relevant information to improve match precision
+                </label>
                 <textarea
-                  className="bg-gray-200/50 text-black h-72 md:h-64 md:text-sm focus:outline-none mb-5 p-4 text-xs resize-none rounded-2xl flex-grow"
+                  className="bg-gray-200/50 text-black h-40 md:h-72 md:text-sm focus:outline-none mb-5 p-3 md:p-4 text-xs resize-none rounded-2xl flex-grow"
                   placeholder="Enter any other relevant information..."
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
@@ -617,110 +774,40 @@ const InputChat = () => {
                 <button
                   type="button"
                   onClick={handlePrevStep}
-                  className="bg-gray-400 py-2 px-6 text-white rounded-full hover:scale-95 mb-10 hover:bg-gray-800 cursor-pointer transition-all duration-200 ease-in-out"
+                  className="bg-gray-400 py-2 px-4 md:px-6 text-white rounded-full hover:scale-95 mb-10 hover:bg-gray-800 cursor-pointer transition-all duration-200 ease-in-out"
                 >
-                  <ArrowUturnLeftIcon className='h-5 w-5 font-extrabold' />
+                  <ArrowUturnLeftIcon className="h-5 w-5 font-extrabold" />
                 </button>
               )}
-              {step > 0 && step < 5 && userType === 'Patient' && (
+              {step > 0 && step < 4 && userType === "Patient" && (
                 <button
                   type="button"
                   onClick={handleNextStep}
-                  className="bg-blue-500 py-2 px-6 text-white rounded-full hover:scale-95 hover:bg-blue-800 cursor-pointer transition-all mb-10 duration-200 ease-in-out"
+                  className="bg-[#67a2e1] py-2 px-4 md:px-6 text-white rounded-full hover:scale-95 hover:bg-[#5a91c4] cursor-pointer transition-all mb-10 duration-200 ease-in-out"
                 >
                   Next
                 </button>
               )}
-              {step === 3 && userType === 'Physician' && (
+              {step === 2 && userType === "Physician" && (
                 <button
                   type="button"
                   onClick={handleSubmit}
-                  className="bg-blue-500 py-2 px-6 mb-10 text-white rounded-full hover:scale-95 hover:bg-blue-800 cursor-pointer transition-all duration-200 ease-in-out"
+                  className="bg-blue-500 py-2 px-4 md:px-6 mb-10 text-white rounded-full hover:scale-95 hover:bg-blue-800 cursor-pointer transition-all duration-200 ease-in-out"
                 >
                   Submit
                 </button>
               )}
-              {step === 5 && userType === 'Patient' && (
+              {step === 4 && userType === "Patient" && (
                 <button
                   type="button"
                   onClick={handleSubmit}
-                  className="bg-blue-500 py-2 px-6 mb-10 text-white rounded-full hover:scale-95 hover:bg-blue-800 cursor-pointer transition-all duration-200 ease-in-out"
+                  className="bg-blue-500 py-2 px-4 md:px-6 mb-10 text-white rounded-full hover:scale-95 hover:bg-blue-800 cursor-pointer transition-all duration-200 ease-in-out"
                 >
                   Submit
                 </button>
               )}
             </div>
           </div>
-
-          {step === 0 && (
-  <>
-
-  <hr className="border-gray-300 mb-9" />
-
-    <section className="flex flex-col items-center bg-transparent p-8 mb-12">
-    <h1 className="text-3xl font-bold text-center mb-10">Our Mission</h1>
-      <Image src={missionImage} alt="Almara Team" width={400} height={400} className="mb-10" />
-      
-      <p className="text-lg text-center">
-        Almara is a group of undergraduate students from the Ohio State University looking to transform clinical trials with a groundbreaking platform.
-        The focus is on connecting patients with clinical trials while taking care to address healthcare disparities, especially
-        in underprivileged communities.
-      </p>
-    </section>
-
-    <hr className="border-gray-300" />
-
-
-    <section className="w-full p-8 bg-white rounded-lg mb-4 md:flex md:justify-between md:gap-20">
-
-      <div className="md:w-1/2">
-        <h2 className="text-2xl font-bold text-center md:text-left mt-12 mb-6">Choose Your Role</h2>
-        <div className="mb-12">
-          <h3 className="text-xl font-semibold text-blue-600">Patient Mode</h3>
-          <p className="text-lg text-gray-700">
-            Patients can use the service to find clinical trials that match their condition and demographic information, 
-            allowing them to explore potential treatment options tailored to their specific health needs.
-          </p>
-        </div>
-        <div>
-          <h3 className="text-xl font-semibold text-blue-600">Physician Mode</h3>
-          <p className="text-lg text-gray-700">
-            Physicians can use the service to match clinical trials based on desired conditions, sex, age, and other relevant criteria,
-            facilitating the identification of appropriate trials for their patients.
-          </p>
-        </div>
-      </div>
-
-      <div className="md:w-1/2 mt-12">
-  <h2 className="text-2xl font-bold text-center md:text-left mb-6">Steps</h2>
-  <div className="flex flex-col gap-12">
-    <div className="flex items-center md:flex-row">
-      <span className="text-3xl font-bold text-blue-600 mr-4 md:mr-4">1</span>
-      <p className="text-lg md:text-left">
-        <strong>Identify Your Condition:</strong> Enter your medical condition and other relevant health information to begin the search.
-      </p>
-    </div>
-    <div className="flex items-center md:flex-row">
-      <span className="text-3xl font-bold text-blue-600 mr-4 md:mr-4">2</span>
-      <p className="text-lg md:text-left">
-        <strong>Get Matched:</strong> Our platform uses advanced algorithms and Artificial Intelligence to match you with suitable clinical trials based on your provided information.
-      </p>
-    </div>
-    <div className="flex items-center md:flex-row">
-      <span className="text-3xl font-bold text-blue-600 mr-4 md:mr-4">3</span>
-      <p className="text-lg md:text-left">
-        <strong>Connect with Trial Coordinators:</strong> Receive detailed information about matched trials and directly contact trial coordinators to learn more and participate.
-      </p>
-    </div>
-  </div>
-</div>
-    </section>
-  </>
-)}
-
-
-
-
         </div>
       )}
     </div>
