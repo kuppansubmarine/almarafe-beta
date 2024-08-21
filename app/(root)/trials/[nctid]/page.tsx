@@ -3,7 +3,8 @@ import { QuestionMarkCircleIcon, CheckBadgeIcon } from '@heroicons/react/24/outl
 import { CheckCircleIcon, SparklesIcon, ExclamationCircleIcon, InformationCircleIcon, DocumentTextIcon, BeakerIcon, HeartIcon, ExclamationTriangleIcon, MinusCircleIcon, XCircleIcon } from '@heroicons/react/24/solid';
 import ErrorPage from '@/components/Error';
 import LoadingPage from '@/components/Analyzing';
-import PrintButton from '@/components/PrintButton'
+import PrintButton from '@/components/PrintButton';
+import Popup from '@/components/Popup';
 
 
 
@@ -118,6 +119,8 @@ const TrialPage = async ({ params }: { params: { id: string; nctid: string } }) 
         .filter(item => item !== '' && !item.includes('Exclusion Criteria'));
 
     return (
+        <>
+        <Popup/>
         <div className="min-h-screen bg-gray-50 p-8 flex items-start justify-center">
 
             <div className="p-1 md:p-5 lg:p-8 md:bg-white md:border-2 rounded-lg max-w-6xl w-full">
@@ -211,6 +214,7 @@ const TrialPage = async ({ params }: { params: { id: string; nctid: string } }) 
 
 
         </div>
+        </>
 
     );
 };

@@ -1,41 +1,50 @@
-'use client'
+'use client';
 import * as React from 'react';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import {useEffect, useState} from 'react';
 import Image from "next/image";
+import { useEffect, useState } from 'react';
 import im from '@/Images/close.png';
-
-const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
-  boxShadow: 24,
-  p: 4,
-};
+import { FormEvent } from 'react';
 
 export default function BasicModal() {
   const [approve, setApprove] = useState('');
   const [relevance, setRelevance] = useState('');
   const [recommend, setRecommend] = useState('');
   const [open, setOpen] = useState(false);
+  const [formSubmitted, setFormSubmitted] = useState(false);
+
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
   useEffect(() => {
-    const key = setTimeout(handleOpen, 5000);
-    return () => clearTimeout(key); // Clean up the timeout on component unmount
+    const modalShown = sessionStorage.getItem('modalShown');
+    const initialVisitTime = sessionStorage.getItem('initialVisitTime');
+
+    if (!modalShown) {
+      if (!initialVisitTime) {
+        // Store the initial visit time if it doesn't exist
+        sessionStorage.setItem('initialVisitTime', Date.now().toString());
+      } else {
+        const elapsedTime = Date.now() - parseInt(initialVisitTime, 10);
+
+        if (elapsedTime >= 30000) {
+          handleOpen();
+          sessionStorage.setItem('modalShown', 'true');
+        } else {
+          const remainingTime = 30000 - elapsedTime;
+          const timeout = setTimeout(() => {
+            handleOpen();
+            sessionStorage.setItem('modalShown', 'true');
+          }, remainingTime);
+
+          return () => clearTimeout(timeout);
+        }
+      }
+    }
   }, []);
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     const requestBody = {
       'james': approve.trim(),
       'relevance': relevance.trim(),
@@ -47,7 +56,7 @@ export default function BasicModal() {
     setRelevance('');
     setRecommend('');
 
-    const response = await fetch('https://almarabeta.azurewebsites.net/api/form_data', {
+    await fetch('https://almarabeta.azurewebsites.net/api/form_data', {
       method: 'POST',
       credentials: 'include',
       headers: {
@@ -55,7 +64,16 @@ export default function BasicModal() {
       },
       body: JSON.stringify(requestBody),
     });
+
+    setFormSubmitted(true);
+    handleClose();
   };
+
+  useEffect(() => {
+    if (formSubmitted) {
+      setFormSubmitted(false);
+    }
+  }, [formSubmitted]);
 
   return (
     <div>
