@@ -9,6 +9,7 @@ import {
   EyeDropperIcon,
 } from "@heroicons/react/24/outline";
 import { FaUserMd, FaUser, FaSearch, FaBookMedical } from "react-icons/fa";
+import { IoSearchCircle } from "react-icons/io5";
 import { HeartIcon as HeartIconSolid, ClipboardDocumentIcon } from "@heroicons/react/24/solid";
 import { useRouter } from "next/navigation";
 import toast, { Toaster } from "react-hot-toast";
@@ -299,22 +300,39 @@ const InputChat = () => {
             onClick={() => handleUserTypeSelection("Patient")}
             className="bg-white border border-gray-300 py-2 px-4 md:px-6 text-black rounded-full hover:scale-95 hover:bg-gray-200 cursor-pointer transition-all duration-200 ease-in-out flex items-center gap-2"
           >
-            <FaUser className="text-xl" />
-            Patient Mode
+            <FaUser className="sm:text-xl flex-shrink-0 flex-grow-0" />
+            <p className="text-sm sm:text-md">Patient Mode</p>
           </button>
           <button
             type="button"
             onClick={() => handleUserTypeSelection("Physician")}
             className="bg-white border border-gray-300 py-2 px-4 md:px-6 text-black rounded-full hover:scale-95 hover:bg-gray-200 cursor-pointer transition-all duration-200 ease-in-out flex items-center gap-2"
           >
-            <FaUserMd className="text-xl" />
-            Physician Mode
+            <FaUserMd className="sm:text-xl" />
+            <p className="text-sm sm:text-md">Physician Mode</p>
           </button>
         </div>
       </div>
       <div className="flex gap-5">
-      <h2 className="mt-8 bg-slate-50 rounded-xl p-4 max-w-64 text-sm"> <span className="font-semibold">Example Search</span> <br></br>  Show me trials for Breast Cancer with HER2 Mutation</h2>
-      <h2 className="mt-8 bg-slate-50 rounded-xl p-4 max-w-64 text-sm"> <span className="font-semibold">Example Search</span> <br></br>  Search for trials for Melanoma that metastasized to the lungs</h2>
+      <div className="flex flex-col mt-12 bg-slate-50 rounded-xl p-4 max-w-64">
+      <div className="flex gap-2 items-center">
+        <IoSearchCircle className=" h-5 w-5"/>
+      <span className="font-semibold text-sm">Example</span>
+      
+      </div>
+      <h2 className="mt-3 text-sm">Show me trials for Breast Cancer with HER2 Mutation</h2>
+      </div>
+
+      <div className="flex flex-col mt-12 bg-slate-50 rounded-xl p-4 max-w-64">
+        <div className="flex gap-2 items-center">
+        <IoSearchCircle className=" h-5 w-5"/>
+      <span className="font-semibold text-sm">Example</span>
+      
+      </div>
+      <h2 className="mt-3 text-sm"> Search for trials for Melanoma that metastasized to the lungs</h2>
+      </div>
+
+      
       </div>
     </div>
               </div>
