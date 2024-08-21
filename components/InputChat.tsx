@@ -1,14 +1,21 @@
-"use client"
-import React, { useState, useRef } from 'react';
-import { MagnifyingGlassIcon, UserCircleIcon, ArrowUturnLeftIcon, EyeDropperIcon } from '@heroicons/react/24/outline';
-import { HeartIcon, ClipboardDocumentIcon } from '@heroicons/react/24/solid';
-import { useRouter } from 'next/navigation';
-import toast, { Toaster } from 'react-hot-toast';
-import Image from "next/image";
-import logo from '@/Images/ALMARALOGO.png';
-import missionImage from '@/Images/AlmaraTeam.jpeg';
-import AnalyzingPage from './Analyzing';
-import ErrorPage from './Error';
+"use client";
+import React, { useState, useRef} from "react";
+import {
+  MagnifyingGlassIcon,
+  UserCircleIcon,
+  ArrowUturnLeftIcon,
+  HeartIcon as HeartIconOutline,
+  EyeDropperIcon,
+} from "@heroicons/react/24/outline";
+import { FaUserMd, FaUser, FaSearch } from "react-icons/fa";
+import { HeartIcon as HeartIconSolid, ClipboardDocumentIcon } from "@heroicons/react/24/solid";
+import { useRouter } from "next/navigation";
+import toast, { Toaster } from "react-hot-toast";
+import AnalyzingPage from "./Analyzing";
+import ErrorPage from "./Error";
+import Popup from '@/components/Popup';
+
+
 
 const InputChat = () => {
   const [step, setStep] = useState(0);
@@ -37,13 +44,13 @@ const InputChat = () => {
   const [previousCancerStage, setPreviousCancerStage] = useState("");
 
   const [treatmentTypes, setTreatmentTypes] = useState<string[]>([]);
-  const [treatmentResponse, setTreatmentResponse] = useState('');
-  const [adverseEffects, setAdverseEffects] = useState('');
-  const [otherTreatment, setOtherTreatment] = useState('');
-  const [otherKeywords, setOtherKeywords] = useState('');
-  const [PI, setPI] = useState('');
-  const [protocolID, setProtocolID] = useState('');
-  const [mode, setMode] = useState('');
+  const [treatmentResponse, setTreatmentResponse] = useState("");
+  const [adverseEffects, setAdverseEffects] = useState("");
+  const [otherTreatment, setOtherTreatment] = useState("");
+  const [otherKeywords, setOtherKeywords] = useState("");
+  const [PI, setPI] = useState("");
+  const [protocolID, setProtocolID] = useState("");
+  const [mode, setMode] = useState("");
   const topRef = useRef<HTMLDivElement>(null);
 
 
@@ -247,7 +254,7 @@ const InputChat = () => {
   return (
     <>
     <div>
-    <Popup />
+    <Popup/>
       {isLoading ? (
         <AnalyzingPage />
       ) : error ? (
