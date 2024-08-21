@@ -18,27 +18,27 @@ function NavBar() {
     };
 
     return (
-        <nav className="navbar bg-base-200/10 border-b-2 flex items-center justify-between px-4 py-2">
+        <nav className="navbar bg-base-200/10 border-b-2 flex items-center justify-between px-6 py-3">
             <div className="flex items-center">
                 <Image className="w-7 h-7 mr-1" alt="logo" src={logo} />
                 <span className="font-semibold ml-1 rounded-lg text-lg sm:text-xl">
                     Almara <span className="text-sky-600">Beta</span>
                 </span>
             </div>
-            
-            <div className="hidden md:flex flex-1 justify-center items-center">
-                <button className="btn btn-ghost mx-2 text-sm sm:text-base" onClick={() => navigateTo("/mission")}>
-                    Our Mission
+
+            <div className="flex-1  justify-end items-center hidden md:flex">
+                <button className="btn border-2 bg-white mx-2 font-medium text-s sm:text-lg" onClick={() => navigateTo("/mission")}>
+                    About Us
                 </button>
-                <button className="btn btn-ghost mx-2 text-sm sm:text-base" onClick={() => navigateTo("/howitworks")}>
-                    How It Works
+                <button className="btn mx-2 bg-white font-medium text-sm sm:text-lg" onClick={() => navigateTo("/tutorial")}>
+                    Tutorial
                 </button>
             </div>
 
             <div className="flex items-center">
                 <button className="btn btn-square btn-ghost mr-2" onClick={redirectToLinkedIn}>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
-                        <path d="M19 0h-14c-2.76 0-5 2.24-5 5v14c0 2.76 2.24 5 5 5h14c2.76 0 5-2.24 5-5v-14c0-2.76-2.24-5-5-5zm-11 19h-3v-9h3v9zm-1.5-10.2c-.966 0-1.75-.784-1.75-1.75s.784-1.75 1.75-1.75 1.75.784 1.75 1.75-.784 1.75-1.75 1.75zm13.5 10.2h-3v-4.5c0-1.11-.9-2-2-2s-2 .89-2 2v4.5h-3v-9h3v1.351c.901-.835 2.12-1.351 3.5-1.351 2.481 0 4.5 2.02 4.5 4.5v4.5z"/>
+                        <path d="M19 0h-14c-2.76 0-5 2.24-5 5v14c0 2.76 2.24 5 5 5h14c2.76 0 5-2.24 5-5v-14c0-2.76-2.24-5-5-5zm-11 19h-3v-9h3v9zm-1.5-10.2c-.966 0-1.75-.784-1.75-1.75s.784-1.75 1.75-1.75 1.75.784 1.75 1.75-.784 1.75-1.75 1.75zm13.5 10.2h-3v-4.5c0-1.11-.9-2-2-2s-2 .89-2 2v4.5h-3v-9h3v1.351c.901-.835 2.12-1.351 3.5-1.351 2.481 0 4.5 2.02 4.5 4.5v4.5z" />
                     </svg>
                 </button>
                 <button className="btn btn-square btn-ghost" onClick={() => navigateTo("/")}>
@@ -54,17 +54,22 @@ function NavBar() {
                 </button>
             </div>
 
-            {/* Mobile Menu */}
             {isMenuOpen && (
-                <div className="md:hidden absolute top-16 left-0 w-full bg-white shadow-lg z-10">
-                    <button className="w-full py-2 px-4 text-left" onClick={() => navigateTo("/mission")}>
-                        Our Mission
-                    </button>
-                    <button className="w-full py-2 px-4 text-left" onClick={() => navigateTo("/howitworks")}>
-                        How It Works
-                    </button>
-                </div>
-            )}
+    <div className="md:hidden absolute top-16 left-0 w-full bg-white z-20">
+        <button
+            className="w-full py-4 px-4 text-center border border-gray-300 font-medium"
+            onClick={() => navigateTo("/mission")}
+        >
+            About Us
+        </button>
+        <button
+            className="w-full py-4 px-4 text-center font-medium border border-gray-300"
+            onClick={() => navigateTo("/tutorial")}
+        >
+            Tutorial
+        </button>
+    </div>
+)}
         </nav>
     );
 }

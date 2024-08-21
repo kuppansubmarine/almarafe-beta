@@ -4,7 +4,7 @@ import missionImage from "@/Images/AlmaraTeam.jpeg";
 
 const Mission = () => {
   return (
-    <div className="flex flex-col items-center p-8 mb-12 rounded-lg shadow-xl">
+    <div className="flex flex-col items-center mt-8 p-8 mb-12 rounded-lg ">
       <h1 className="text-4xl font-semibold text-center mb-10 text-black">
         Our Mission
       </h1>

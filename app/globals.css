@@ -105,7 +105,7 @@ body {
 .bullet-point {
   height: 8px; /* Adjust size as needed */
   width: 8px; /* Adjust size as needed */
-  background-color: #b58bf3; /* Dark grey color for the bullet point */
+  background-color: #6c6c6c; /* Dark grey color for the bullet point */
   border-radius: 50%;
   display: inline-block;
   flex-shrink: 0; /* Ensure bullet points do not shrink */

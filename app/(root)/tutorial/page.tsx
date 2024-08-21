@@ -3,7 +3,7 @@ import { FaUserMd, FaUser, FaSearch, FaHandsHelping } from "react-icons/fa";
 
 const HowItWorks = () => {
   return (
-    <div className="w-full p-8 text-black rounded-lg shadow-lg mb-8 md:flex md:justify-between md:gap-20">
+    <div className="w-full p-8 md:p-16 text-black rounded-lg mb-8 md:flex md:justify-between md:gap-20">
       <div className="md:w-1/2">
         <h2 className="text-3xl font-semibold text-center md:text-left mt-12 mb-8 tracking-wide">
           Choose Your Role
