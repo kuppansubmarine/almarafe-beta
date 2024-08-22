@@ -278,12 +278,19 @@ const InputChat = () => {
               <FaBookMedical className="w-6 md:w-6 h-6 md:h-6 text-[#5299e6]" />
             </div>
             <input
-              type="text"
-              className="bg-white border border-gray-300 focus:border-[#67a2e1] focus:ring-2 focus:ring-[#67a2e1] text-black h-10 md:h-12 w-full focus:outline-none pl-12 md:pl-12 pr-8 md:pr-12 rounded-xl text-sm md:text-lg transition duration-200"
-              placeholder="Search for Clinical Trials... | More details for better results"
-              value={general}
-              onChange={(e) => setGeneral(e.target.value)}
-            />
+  type="text"
+  className="bg-white border border-gray-300 focus:border-[#67a2e1] focus:ring-2 focus:ring-[#67a2e1] text-black h-10 md:h-12 w-full focus:outline-none pl-14 md:pl-16 pr-8 md:pr-12 rounded-xl text-sm md:text-lg transition duration-200"
+  placeholder="Search for Clinical Trials | More details for better results"
+  value={general}
+  onChange={(e) => setGeneral(e.target.value)}
+  onKeyDown={(e) => {
+    if (e.key === "Enter") {
+      handleSubmit();
+    }
+  }}
+/>
+
+            
             {general && (
               <div
                 className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
@@ -339,7 +346,12 @@ const InputChat = () => {
             )}
 
             {step === 1 && userType === "Patient" && (
-              <div className="flex flex-col justify-center gap-3 mt-4 p-6">
+              <div className="flex flex-col justify-center gap-3 mt-4 p-6"
+              
+
+              
+              >
+                
                 <h1 className="text-xl md:text-2xl text-left pb-10 font-medium flex items-center mt-8">
                   <UserCircleIcon className="mr-2 h-5 md:h-6 w-5 md:w-6 text-gray-500" /> General Information
                 </h1>
@@ -358,6 +370,7 @@ const InputChat = () => {
                   value={condition}
                   onChange={(e) => setCondition(e.target.value)}
                   required
+  
                 />
 
                 <label className="block text-base md:text-lg mb-2 font-medium">
@@ -810,9 +823,11 @@ const InputChat = () => {
                 </button>
               )}
               {step > 0 && step < 4 && userType === "Patient" && (
+                
                 <button
                   type="button"
                   onClick={handleNextStep}
+                  
                   className="bg-[#67a2e1] py-2 px-4 md:px-6 text-white rounded-full hover:scale-95 hover:bg-[#5a91c4] cursor-pointer transition-all mb-10 duration-200 ease-in-out"
                 >
                   Next
@@ -822,6 +837,7 @@ const InputChat = () => {
                 <button
                   type="button"
                   onClick={handleSubmit}
+                  
                   className="bg-blue-500 py-2 px-4 md:px-6 mb-10 text-white rounded-full hover:scale-95 hover:bg-blue-800 cursor-pointer transition-all duration-200 ease-in-out"
                 >
                   Submit
