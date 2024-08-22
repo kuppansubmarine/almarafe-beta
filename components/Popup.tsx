@@ -27,11 +27,11 @@ export default function BasicModal() {
       } else {
         const elapsedTime = Date.now() - parseInt(initialVisitTime, 10);
 
-        if (elapsedTime >= 60000) {
+        if (elapsedTime >= 90000) {
           handleOpen();
           sessionStorage.setItem('modalShown', 'true');
         } else {
-          const remainingTime = 60000 - elapsedTime;
+          const remainingTime = 90000 - elapsedTime;
           const timeout = setTimeout(() => {
             handleOpen();
             sessionStorage.setItem('modalShown', 'true');
@@ -50,7 +50,6 @@ export default function BasicModal() {
       'relevance': relevance.trim(),
       'share': recommend.trim(),
     };
-
 
     setApprove('');
     setRelevance('');
