@@ -13,6 +13,7 @@ import NoTrialsPage from '@/components/NoTrials';
 import PaginationControls from '@/components/PaginationControls';
 import { useRouter } from 'next/navigation';
 import Popup from '@/components/Popup';
+import Loading from '@/components/Loading';
 
 type Props = {
   search_id: string | null
@@ -89,6 +90,7 @@ const filter_results = async (searchID: string, phase: string, treatment: string
 
 const Trials = ({ params, searchParams }: { params: { id: string }, searchParams: { [key: string]: string | string[] | undefined } }) => {
 
+  const [loading, setLoading] = useState(true);
   const [treatmentType, setTreatmentType] = useState('');
   const [phaseNum, setPhaseNum] = useState('');
   const [data, setData] = useState<Trial[] | null>(null);
@@ -140,6 +142,7 @@ const Trials = ({ params, searchParams }: { params: { id: string }, searchParams
           } else if (result.status === 'ready') {
             setData(result.data);
             setProcessing(false);
+            setLoading(false);
           } else {
             throw new Error('Unknown status');
           }
@@ -166,11 +169,13 @@ const Trials = ({ params, searchParams }: { params: { id: string }, searchParams
     );
   }
 
-
-
   const trials = data?.slice(start, end) || [];
 
   return (
+    <>
+    {loading ? (
+      <Loading />
+    ) : (
     <>
     <Popup/>
     <div className="flex flex-col justify-center items-center min-h-screen bg-gray-50 p-4">
@@ -252,6 +257,7 @@ const Trials = ({ params, searchParams }: { params: { id: string }, searchParams
         <PaginationControls hasNextPage={end < (data ?? []).length} hasPrevPage={start > 0} searchID={search_id} dataLength={(data ?? []).length} />
       </div>
     </div>
+    </> )}
     </>
   );
 };
