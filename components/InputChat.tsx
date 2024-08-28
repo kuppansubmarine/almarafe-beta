@@ -338,7 +338,7 @@ const InputChat = () => {
                         </div>
                       )}
                     </div>
-                    <div className="flex gap-2 md:gap-4">
+                    <div className="flex flex-col md:flex-row md:gap-4">
                       <div className="flex gap-4 md:gap-6">
                         <button
                           type="button"
@@ -358,12 +358,13 @@ const InputChat = () => {
                         </button>
                       </div>
                       <button
-                        className="ml-2 flex items-center text-white bg-[#67a2e1] hover:bg-[#5a91c4] p-2 rounded-lg"
+                        className="mt-4 ml-1 max-w-[110px] md:ml-2 md:mt-0 flex items-center text-white bg-[#67a2e1] hover:bg-[#5a91c4] p-2 rounded-lg"
                         
                         onClick={() => {setIsFilterOpen(true), setUserType("Physician");}}
                         
                       >
-                        <FaSearch className="mr-2" /> Advanced
+                        <FaSearch className=" mr-2 text-sm flex-shrink-0 flex-grow-0" /> 
+                        <p className="text-sm sm:text-md">Advanced</p>
                       </button>
                     </div>
                     <div className="flex gap-5">
