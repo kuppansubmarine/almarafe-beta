@@ -213,6 +213,7 @@ export default function BasicModal() {
                     &#128552; Not Likely
                   </label>
                 </div>
+                <p>Fill out this form to help us improve our platform: <a href="https://osu.az1.qualtrics.com/jfe/form/SV_eIO0b0nsTWLDAUe" target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">Click here to access the form</a></p>
 
                 <button type="submit" className="mt-4 p-2 bg-blue-500 text-white">
                   Submit
