@@ -229,7 +229,7 @@ const InputChat = () => {
 
       console.log(requestBody);
       setIsLoading(true);
-      const response = await fetch("https://almarabeta.azurewebsites.net/api/search", {
+      const response = await fetch("http://127.0.0.1:5000/api/search", {
         method: "POST",
         credentials: "include",
         headers: {

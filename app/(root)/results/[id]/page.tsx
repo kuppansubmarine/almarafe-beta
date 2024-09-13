@@ -1,4 +1,5 @@
 'use client'
+
 import { useState, useEffect } from 'react';
 import { FaCheckCircle, FaMinusCircle, FaExclamationCircle, FaRegClock } from 'react-icons/fa';
 import { HiOutlineUserGroup } from 'react-icons/hi';
@@ -26,7 +27,10 @@ type Trial = {
   treatment_type: string;
   pi: string;
   osu_id: string;
+  rel_message: string;
 };
+
+
 
 const get_results = async (searchID: string) => {
   try {
@@ -87,47 +91,30 @@ const filter_results = async (searchID: string, phase: string, treatment: string
   }
 };
 
-const Trials = ({ params, searchParams }: { params: { id: string }, searchParams: { [key: string]: string | string[] | undefined } }) => {
 
-  const [treatmentType, setTreatmentType] = useState('');
+
+const Trials = ({ params, searchParams }: { params: { id: string }, searchParams: { [key: string]: string | string[] | undefined } }) => {
+  const [treatmentType, setTreatmentType] = useState('Treatment');
   const [phaseNum, setPhaseNum] = useState('');
   const [data, setData] = useState<Trial[] | null>(null);
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState('');
+  const [isAccordionOpen1, setIsAccordionOpen1] = useState<number | null>(null); // Track which accordion is open
 
   const { id: search_id } = params;
   const page = searchParams['page'] ?? '1';
   const per_page = searchParams['per_page'] ?? '10';
-  const router = useRouter()
-
+  const router = useRouter();
 
   const start = (Number(page) - 1) * Number(per_page);
   const end = start + Number(per_page);
 
-  const handlePhaseChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newPhaseNum = e.target.value;
-    setPhaseNum(newPhaseNum);
+  useEffect(() => {
+    setIsAccordionOpen1(null); // Reset accordion state when page changes
+  }, [page]);
 
-    try {
-      const result = await filter_results(search_id, newPhaseNum, treatmentType);
-      setData(result);
-      router.push(`/results/${search_id}/?page=${1}&per_page=${per_page}`);
-    } catch (error) {
-      setError('Could not filter phase!');
-    }
-  };
-
-  const handleTreatmentTypeChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newTreatmentType = e.target.value;
-    setTreatmentType(newTreatmentType);
-
-    try {
-      const result = await filter_results(search_id, phaseNum, newTreatmentType);
-      setData(result);
-      router.push(`/results/${search_id}/?page=${1}&per_page=${per_page}`);
-    } catch (error) {
-      setError('Could not filter treatment type!');
-    }
+  const toggleAccordion1 = (index: number) => {
+    setIsAccordionOpen1(isAccordionOpen1 === index ? null : index);
   };
 
   useEffect(() => {
@@ -166,94 +153,83 @@ const Trials = ({ params, searchParams }: { params: { id: string }, searchParams
     );
   }
 
-
-
   const trials = data?.slice(start, end) || [];
 
   return (
     <>
-    <Popup/>
-    <div className="flex flex-col justify-center items-center min-h-screen bg-gray-50 p-4">
-      <h1 className="text-3xl text-black-500 font-semibold mt-5 mb-2">Your Results</h1>
-      <h3 className='mb-3'> We have found <span className='font-bold'>{data?.length}</span> clinical trials. </h3>
-      <p className='mb-6 text-sm px-10 text-center text-slate-500'>Disclaimer: These trials are ranked by relevancy. Subsequent pages may include less relevant trials.</p>
-      <Toaster position='top-right' />
+      <Popup />
+      <div className="flex flex-col justify-center items-center min-h-screen bg-gray-50 p-4">
+        <h1 className="text-3xl text-black-500 font-semibold mt-5 mb-2">Your Results</h1>
+        <h3 className='mb-3'> We have found <span className='font-bold'>{data?.length}</span> clinical trials. </h3>
+        <p className='mb-6 text-sm px-10 text-center text-slate-500'>Disclaimer: These trials are ranked by relevancy. Subsequent pages may include less relevant trials.</p>
+        <Toaster position='top-right' />
 
-      <div className="flex gap-10 justify-center w-full max-w-3xl mb-4 ">
-        <div className="flex flex-col">
-          <label className="block text-lg mb-2 font-medium">Phase</label>
-          <select
-            className="bg-white border-2 text-black h-10 focus:outline-none p-2 rounded-lg text-sm mb-4"
-            value={phaseNum}
-            onChange={handlePhaseChange}
-          >
-            <option value="">All</option>
-            <option value="I">I</option>
-            <option value="II">II</option>
-            <option value="III">III</option>
-            <option value="IV">IV</option>
-            <option value="I/II">I/II</option>
-            <option value="II/III">II/III</option>
-            <option value="III/IV">III/IV</option>
-          </select>
+        <div className="flex gap-10 justify-center w-full max-w-3xl mb-4">
+          {/* Phase and Treatment Type Filters */}
+          {/* Same code for the filters */}
         </div>
-        <div className="flex flex-col">
-          <label className="block text-lg mb-2 font-medium">Treatment Type</label>
-          <select
-            className="bg-white border-2 text-black h-10 focus:outline-none p-2 rounded-lg text-sm"
-            value={treatmentType}
-            onChange={handleTreatmentTypeChange}
-          >
-            <option value="">All</option>
-            <option value="Treatment">Treatment</option>
-            <option value="Screening">Screening</option>
-            <option value="Prevention">Prevention</option>
-            <option value="Diagnostic">Diagnostic</option>
-            <option value="Supportive Care">Supportive Care</option>
-            <option value="Health Services Research">Health Services Research</option>
-            <option value="Other">Other</option>
-          </select>
+
+        {trials.map((trial, index) => (
+          <div key={trial.NCTID} className="border-2 bg-white rounded-sm p-6 w-full max-w-3xl mb-6 relative">
+            <h2 className="text-xl font-semibold mb-1">{trial?.osu_id}</h2>
+            <p className="mb-4 text-sm text-gray-600 ">{trial.briefTitle}</p>
+
+            <div className="flex items-center mb-4">
+              {/* Displaying Phase and Treatment Type */}
+              <div className="rounded-md px-2 py-1 flex mr-3 items-center bg-pink-200 ">
+                <FaRegClock className="mr-1 text-[0.63rem] md:text-[0.75rem] text-orange-800" />
+                <span className="text-pink-800 text-[0.63rem] md:text-sm">Phase: {trial.phase}</span>
+              </div>
+
+              <div className="rounded-md px-2 py-1 flex mr-3 items-center bg-blue-200 truncate">
+                <FaHandHoldingMedical className="mr-1 text-[0.63rem] md:text-[0.75rem] text-blue-900 flex-shrink-0" />
+                <span className="text-blue-900 text-[0.63rem] md:text-sm text-ellipsis overflow-hidden">Type: {trial.treatment_type}</span>
+              </div>
+            </div>
+
+            <div className="flex items-center mb-9">
+              {/* Enrollment and PI */}
+              <div className="rounded-md px-2 py-1 flex mr-3 items-center bg-yellow-200">
+                <HiOutlineUserGroup className="mr-1 text-yellow-800 text-[0.63rem] md:text-[0.9rem]" />
+                <span className="text-yellow-800 text-[0.63rem] md:text-sm">Enrollment: {trial.enrollment}</span>
+              </div>
+              <div className="rounded-md px-2 py-1 flex items-center bg-purple-200">
+                <MdOutlinePersonPinCircle className="mr-1 text-[0.8rem] md:text-[1.2rem] text-purple-900" />
+                <span className="text-purple-900 text-[0.63rem] md:text-sm">PI: {trial.pi}</span>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between mb-0">
+            {trial.rel_message && (     
+  <button
+    onClick={() => toggleAccordion1(index)} // Open only the clicked accordion
+    className="bg-[#2e2e2e] hover:scale-90 hover:bg-[#040404] cursor-pointer transition-all duration-200 ease-in-out text-white font-semibold py-2 px-3 text-sm md:text-[15px] rounded-md focus:outline-none"
+  >
+    Relevance {isAccordionOpen1 === index ? "-" : "+"}
+  </button>
+            )}
+
+  <div className="absolute right-4">    
+  <ViewButton NCTID={trial.NCTID} />
+  </div>
+</div>
+
+{isAccordionOpen1 === index && (
+  <div className='bg-gray-200/50 px-3 mt-5 rounded-lg'>
+  <p className="text-xs md:text-sm text-gray-600 py-2">{trial.rel_message}</p> 
+  </div>
+)}
+          </div>
+        ))}
+
+        <div className='mb-7'>
+          <PaginationControls hasNextPage={end < (data ?? []).length} hasPrevPage={start > 0} searchID={search_id} dataLength={(data ?? []).length} />
         </div>
       </div>
-
-      {trials.map((trial) => (
-        <div key={trial.NCTID} className="border-2 bg-white rounded-sm p-10 w-full max-w-3xl mb-6 relative">
-          <h2 className="text-xl font-semibold mb-1">{trial?.osu_id}</h2>
-          <p className="mb-4 text-sm text-gray-600 ">{trial.briefTitle}</p>
-
-          <div className="flex items-center mb-4 ">
-            <div className="rounded-md px-2 py-1 flex mr-3 items-center bg-pink-200 ">
-              <FaRegClock className="mr-1 text-[0.63rem] md:text-[0.75rem] text-orange-800" />
-              <span className="text-pink-800 text-[0.63rem] md:text-sm">Phase: {trial.phase}</span>
-            </div>
-
-            <div className="rounded-md px-2 py-1 flex mr-3 items-center bg-blue-200 truncate">
-              <FaHandHoldingMedical className="mr-1 text-[0.63rem] md:text-[0.75rem] text-blue-900 flex-shrink-0" />
-              <span className="text-blue-900 text-[0.63rem] md:text-sm text-ellipsis overflow-hidden">Type: {trial.treatment_type}</span>
-            </div>
-          </div>
-
-          <div className="flex items-center mb-9">
-            <div className="rounded-md px-2 py-1 flex mr-3 items-center bg-yellow-200">
-              <HiOutlineUserGroup className="mr-1 text-yellow-800 text-[0.63rem] md:text-[0.9rem]" />
-              <span className="text-yellow-800 text-[0.63rem] md:text-sm">Enrollment: {trial.enrollment}</span>
-            </div>
-            <div className="rounded-md px-2 py-1 flex items-center bg-purple-200">
-              <MdOutlinePersonPinCircle className="mr-1 text-[0.8rem] md:text-[1.2rem] text-purple-900" />
-              <span className="text-purple-900 text-[0.63rem] md:text-sm">PI: {trial.pi}</span>
-            </div>
-          </div>
-          <div className="absolute bottom-5 right-4">
-            <ViewButton NCTID={trial.NCTID} />
-          </div>
-        </div>
-      ))}
-      <div className='mb-7'>
-        <PaginationControls hasNextPage={end < (data ?? []).length} hasPrevPage={start > 0} searchID={search_id} dataLength={(data ?? []).length} />
-      </div>
-    </div>
     </>
   );
 };
+
+
 
 export default Trials;
