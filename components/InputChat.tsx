@@ -19,14 +19,17 @@ import ErrorPage from "./Error";
 import Popup from "@/components/Popup";
 
 const InputChat = () => {
-  const [submittedByExample, setSubmittedByExample] = useState(false);
+  // page states
   const [step, setStep] = useState(0);
   const [userType, setUserType] = useState("");
   const [general, setGeneral] = useState("");
-  const [isAccordionOpen1, setIsAccordionOpen1] = useState(false);
-  const [isAccordionOpen2, setIsAccordionOpen2] = useState(false);
   const router = useRouter();
   const [input, setInput] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [isFilterOpen, setIsFilterOpen] = useState(false); 
+  const topRef = useRef<HTMLDivElement>(null);
+
+  // search states
   const [condition, setCondition] = useState("");
   const [age, setAge] = useState("");
   const [stage, setStage] = useState("");
@@ -34,7 +37,6 @@ const InputChat = () => {
   const [email, setEmail] = useState("");
   const [sex, setSex] = useState("");
   const [ethnicity, setEthnicity] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const [biomarkers, setBiomarkers] = useState("");
   const [otherConditions, setOtherConditions] = useState("");
   const [ecogScore, setEcogScore] = useState("");
@@ -48,15 +50,6 @@ const InputChat = () => {
   const [otherKeywords, setOtherKeywords] = useState("");
   const [PI, setPI] = useState("");
   const [protocolID, setProtocolID] = useState("");
-  const [isFilterOpen, setIsFilterOpen] = useState(false); 
-  const topRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (submittedByExample && general) {
-      handleSubmit();
-      setSubmittedByExample(false); 
-    }
-  }, [general, submittedByExample]);
 
   const handleNextStep = () => {
     if (step === 1 && userType === "Patient" && (!condition || !age || !sex)) {
@@ -93,32 +86,6 @@ const InputChat = () => {
       setProtocolID("");
     }
 
-    if (step === 2 && userType === "Physician") {
-      setAge("");
-      setInput("");
-      setUserType("");
-      setCondition("");
-      setStage("");
-      setEmail("");
-      setSex("");
-      setEthnicity("");
-      setBiomarkers("");
-      setOtherConditions("");
-      setEcogScore("");
-      setPreviousCancer("");
-      setPreviousCancerType("");
-      setPreviousCancerStage("");
-      setTreatmentResponse("");
-      setAdverseEffects("");
-      setOtherTreatment("");
-      setOtherKeywords("");
-      setPI("");
-      setProtocolID("");
-      setStep(0);
-    } else {
-      setStep(step - 1);
-    }
-
     if (topRef.current) {
       topRef.current.scrollIntoView({ behavior: "smooth" });
     }
@@ -134,40 +101,20 @@ const InputChat = () => {
     );
   };
 
-  const handleUserTypeSelection = (type: string) => {
-    setUserType(type);
-    setIsFilterOpen(false);
-    if (type === "Patient") {
-      setStep(1);
-    } else if (type === "Physician") {
-      setStep(2);
-    }
+  const HandlePatientMode = () => {
+    router.push(`/patient`);
   };
-
- 
-
-  const toggleAccordion1 = () => setIsAccordionOpen1(!isAccordionOpen1);
-  const toggleAccordion2 = () => setIsAccordionOpen2(!isAccordionOpen2);
-
+  // massive function to submit patient information from patient or phisician mode
   const handleSubmit = async () => {
-
     if (isFilterOpen) {
-      setUserType("Physician");
-    }
-  
-    if (userType === "Patient" && (!condition || !age || !sex)) {
-      toast.error("Please fill in all required fields!");
-      return;
-    }
-
-    if (userType === "Physician" && !condition && !protocolID && !PI) {
-      toast.error("Condition or Protocol ID or PI must be filled in to search!");
-      return;
-    }
-
-    if (userType === "Physician" && condition && protocolID) {
-      toast.error("You can only search by Condition or Protocol ID, not both!");
-      return;
+      if (!condition && !protocolID && !PI) {
+        toast.error("Condition, Protocol ID or PI must be filled in to search!");
+        return;
+      }
+      if (condition && protocolID) {
+        toast.error("You can only search by Condition or Protocol ID, not both!");
+        return;
+      }
     }
 
     try {
@@ -184,50 +131,37 @@ const InputChat = () => {
       setAge("");
       setStage("");
       setEmail("");
-
+      // TODO: removing phisician mode
       const requestBody = {
+        // parameters in all searches
         userType: userType,
         condition: conditionTrim,
-        ...(userType === "Patient" && {
-          patient_id: "patient",
-          patient_info: inputTrim,
-          email: emailTrim,
-          stage: stageTrim,
-          age: send_age,
-          sex: sex,
-          ethnicity: ethnicity,
-          biomarkers: biomarkers.trim(),
-          otherConditions: otherConditions.trim(),
-          ecogScore: ecogScore,
-          previousCancer: previousCancer,
-          previousCancerType: previousCancerType.trim(),
-          previousCancerStage: previousCancerStage,
-          previousTreatments: treatmentTypes.includes("Other")
-            ? [...treatmentTypes.filter((t) => t !== "Other"), otherTreatment.trim()]
-            : treatmentTypes,
-          treatmentResponse: treatmentResponse.trim(),
-          adverseEffects: adverseEffects.trim(),
-        }),
-        ...(userType === "Physician" && {
-          age: age,
-          sex: sex,
-          otherKeywords: otherKeywords.trim(),
-          patient_info: inputTrim,
-          protocolID: protocolID.trim(),
-          pi: PI.trim(),
-        }),
-        ...((userType !== "Physician" && userType !== "Patient") && {
-          age: age,
-          sex: sex,
-          otherKeywords: otherKeywords.trim(),
-          patient_info: inputTrim,
-          general: general.trim(),
-          protocolID: protocolID.trim(),
-          pi: PI.trim(),
-        }),
+        age: send_age,
+        sex: sex,
+        patient_id: "patient",
+        patient_info: inputTrim,
+        email: emailTrim,
+        stage: stageTrim,
+        ethnicity: ethnicity,
+        biomarkers: biomarkers.trim(),
+        otherConditions: otherConditions.trim(),
+        ecogScore: ecogScore,
+        previousCancer: previousCancer,
+        previousCancerType: previousCancerType.trim(),
+        previousCancerStage: previousCancerStage,
+        previousTreatments: treatmentTypes.includes("Other")
+          ? [...treatmentTypes.filter((t) => t !== "Other"), otherTreatment.trim()]
+          : treatmentTypes,
+        treatmentResponse: treatmentResponse.trim(),
+        adverseEffects: adverseEffects.trim(),
+        otherKeywords: otherKeywords.trim(),
+        protocolID: protocolID.trim(),
+        pi: PI.trim(),
+        general: general.trim(),
       };
-
       console.log(requestBody);
+
+      // make actual request
       setIsLoading(true);
       const response = await fetch("https://almarabeta.azurewebsites.net/api/search", {
         method: "POST",
@@ -256,37 +190,26 @@ const InputChat = () => {
     }
   };
 
-  const handleExampleClick1 = () => {
-    setSubmittedByExample(true);
-    setGeneral("Show me trials for Breast Cancer with HER2 Mutation");
-  };
-
-  const handleExampleClick2 = () => {
-    setSubmittedByExample(true);
-    setGeneral("Search for trials for Melanoma that metastasized to the lungs");
-  };
-
-
-
+  // handle closing of the popup
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const filterSidebar = document.getElementById("filter-sidebar");
       if (isFilterOpen && filterSidebar && !filterSidebar.contains(event.target as Node)) {
         setProtocolID('');
         setPI('');
-        setIsFilterOpen(false);
         setUserType("");
+        setIsFilterOpen(false);
       }
     };
-  
     document.addEventListener("mousedown", handleClickOutside);
-  
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isFilterOpen]);
 
+
   return (
+    // main page
     <>
       <div>
         <Popup />
@@ -342,35 +265,30 @@ const InputChat = () => {
                       <div className="flex gap-4 md:gap-6">
                         <button
                           type="button"
-                          onClick={() => handleUserTypeSelection("Patient")}
+                          onClick={() => HandlePatientMode()}
                           className="bg-white border border-gray-300 py-2 px-4 md:px-6 text-black rounded-full hover:scale-95 hover:bg-gray-200 cursor-pointer transition-all duration-200 ease-in-out flex items-center gap-2"
                         >
                           <FaUser className="sm:text-xl flex-shrink-0 flex-grow-0" />
                           <p className="text-sm sm:text-md">Patient Mode</p>
                         </button>
                         <button
-                          type="button"
-                          onClick={() => handleUserTypeSelection("Physician")}
-                          className="bg-white border border-gray-300 py-2 px-4 md:px-6 text-black rounded-full hover:scale-95 hover:bg-gray-200 cursor-pointer transition-all duration-200 ease-in-out flex items-center gap-2"
-                        >
-                          <FaUserMd className="sm:text-xl" />
-                          <p className="text-sm sm:text-md">Physician Mode</p>
-                        </button>
-                      </div>
-                      <button
                         className="mt-4 ml-1 max-w-[110px] md:ml-2 md:mt-0 flex items-center text-white bg-[#67a2e1] hover:bg-[#5a91c4] p-2 rounded-lg"
                         
                         onClick={() => {setIsFilterOpen(true), setUserType("Physician");}}
-                        
                       >
                         <FaSearch className=" mr-2 text-sm flex-shrink-0 flex-grow-0" /> 
                         <p className="text-sm sm:text-md">Advanced</p>
                       </button>
+                      </div>
                     </div>
                     <div className="flex gap-5">
                     <div
           className="flex flex-col mt-12 bg-slate-50 rounded-xl p-4 max-w-64 hover-effect"
-          onClick={handleExampleClick1}
+          onClick={() => {
+            setGeneral("Show me trials for Breast Cancer with HER2 Mutation")
+            handleSubmit()
+            }
+          }
         >
                         <div className="flex gap-2 items-center">
                           <IoSearchCircle className=" h-5 w-5" />
@@ -381,7 +299,11 @@ const InputChat = () => {
 
                       <div
           className="flex flex-col mt-12 bg-slate-50 rounded-xl p-4 max-w-64 hover-effect"
-          onClick={handleExampleClick2}
+          onClick={() => {
+            setGeneral("Search for trials for Melanoma that metastasized to the lungs")
+            handleSubmit()
+            }
+          }
         >
                         <div className="flex gap-2 items-center">
                           <IoSearchCircle className=" h-5 w-5" />
@@ -394,449 +316,10 @@ const InputChat = () => {
                 </div>
               )}
 
-              {step === 1 && userType === "Patient" && (
-                <div className="flex flex-col justify-center gap-3 mt-4 p-6">
-                  <h1 className="text-xl md:text-2xl text-left pb-10 font-medium flex items-center mt-8">
-                    <UserCircleIcon className="mr-2 h-5 md:h-6 w-5 md:w-6 text-gray-500" /> General Information
-                  </h1>
 
-                  <p className="text-xs md:text-sm text-red-500 mb-4">* Indicates a required field</p>
-
-                  <label className="block text-base md:text-lg mb-2 font-medium">
-                    What is your condition? <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    className="bg-gray-200/50 text-black h-8 md:h-10 focus:outline-none p-3 md:p-4 mb-5 rounded-2xl text-sm"
-                    placeholder="ex. Chronic Lymphocytic Leukemia"
-                    value={condition}
-                    onChange={(e) => setCondition(e.target.value)}
-                    required
-                  />
-
-                  <label className="block text-base md:text-lg mb-2 font-medium">
-                    What is your age? <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="number"
-                    className="bg-gray-200/50 text-black h-8 md:h-10 focus:outline-none p-3 md:p-4 mb-5 rounded-2xl text-sm"
-                    placeholder="ex. 67"
-                    value={age}
-                    onChange={(e) => setAge(e.target.value)}
-                    required
-                  />
-
-                  <label className="block text-base md:text-lg mb-2 font-medium">
-                    What is your biological sex? <span className="text-red-500">*</span>
-                  </label>
-                  <div className="button-group flex gap-2 mb-4">
-                    <button
-                      type="button"
-                      onClick={() => handleSexSelection("Male")}
-                      className={`h-8 md:h-10 focus:outline-none p-3 md:p-4 rounded-2xl ${
-                        sex === "Male" ? "bg-gray-800 text-white" : "bg-gray-200 text-black"
-                      }`}
-                    >
-                      Male
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleSexSelection("Female")}
-                      className={`h-8 md:h-10 focus:outline-none p-3 md:p-4 rounded-2xl ${
-                        sex === "Female" ? "bg-gray-800 text-white" : "bg-gray-200 text-black"
-                      }`}
-                    >
-                      Female
-                    </button>
-                  </div>
-
-                  <label className="block text-base md:text-lg mb-2 font-medium">
-                    What is your ethnicity? (optional)
-                  </label>
-                  <select
-                    className="bg-gray-200/50 text-black h-8 md:h-10 focus:outline-none p-2 md:p-2 rounded-2xl text-sm mb-4"
-                    value={ethnicity}
-                    onChange={(e) => setEthnicity(e.target.value)}
-                  >
-                    <option value="" disabled>
-                      Select your ethnicity
-                    </option>
-                    <option value="American Indian or Alaska Native">American Indian or Alaska Native</option>
-                    <option value="Asian">Asian</option>
-                    <option value="Black">Black</option>
-                    <option value="Hispanic, Latino or Spanish origin">Hispanic, Latino or Spanish origin</option>
-                    <option value="Middle Eastern or North African">Middle Eastern or North African</option>
-                    <option value="Native Hawaiian or Other Pacific Islander">Native Hawaiian or Other Pacific Islander</option>
-                    <option value="White">White</option>
-                    <option value="More than one race/ethnicity">More than one race/ethnicity</option>
-                    <option value="Prefer not to say">Prefer not to say</option>
-                  </select>
-
-                  <label className="block text-base md:text-lg mb-2 font-medium">What is your email? (optional)</label>
-                  <input
-                    type="email"
-                    className="bg-gray-200/50 text-black h-8 md:h-10 focus:outline-none p-3 md:p-4 mb-5 rounded-2xl text-sm"
-                    placeholder="ex. email@example.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                </div>
-              )}
-
-              {step === 2 && userType === "Physician" && (
-                <div className="flex flex-col justify-center gap-3 mt-4 p-6">
-                  <h1 className="text-xl md:text-2xl text-left mb-5 font-medium flex items-center mt-8">
-                    <EyeDropperIcon className="mr-2 h-5 md:h-6 w-5 md:w-6 text-gray-500" /> Physician Mode
-                  </h1>
-
-                  <label className="block text-base md:text-lg mb-2 font-medium">
-                    What is the patient's condition?{" "}
-                  </label>
-                  <input
-                    type="text"
-                    className="bg-gray-200/50 text-black h-8 md:h-10 focus:outline-none p-3 md:p-4 mb-5 rounded-2xl text-sm"
-                    placeholder="ex. Breast Cancer"
-                    value={condition}
-                    onChange={(e) => setCondition(e.target.value)}
-                    required
-                  />
-
-                  <label className="block text-base md:text-lg mb-2 font-medium">
-                    Any other relevant terms?{" "}
-                  </label>
-                  <input
-                    type="text"
-                    className="bg-gray-200/50 text-black h-8 md:h-10 focus:outline-none p-3 md:p-4 mb-5 rounded-2xl text-sm"
-                    placeholder="ex. HER2, Stage IV"
-                    value={otherKeywords}
-                    onChange={(e) => setOtherKeywords(e.target.value)}
-                  />
-
-                  <label className="block text-base md:text-lg mb-2 font-medium">Protocol Number</label>
-                  <input
-                    type="text"
-                    className="bg-gray-200/50 text-black h-8 md:h-10 focus:outline-none p-3 md:p-4 mb-5 max-w-md rounded-2xl text-sm"
-                    placeholder="ex. OSU-22167"
-                    value={protocolID}
-                    onChange={(e) => setProtocolID(e.target.value)}
-                  />
-
-                  <label className="block text-base md:text-lg mb-2 font-medium">Principal Investigator </label>
-                  <input
-                    type="text"
-                    className="bg-gray-200/50 text-black h-8 md:h-10 focus:outline-none p-3 md:p-4 mb-5 max-w-md rounded-2xl text-sm"
-                    placeholder="Last Name, First name"
-                    value={PI}
-                    onChange={(e) => setPI(e.target.value)}
-                  />
-
-                  <div className="accordion">
-                    <button
-                      onClick={toggleAccordion1}
-                      className="border-2 text-black py-2 px-4 font-medium rounded-lg"
-                    >
-                      Demographics {isAccordionOpen1 ? "-" : "+"}
-                    </button>
-                    {isAccordionOpen1 && (
-                      <div className="accordion-content p-4 mt-2 rounded-lg">
-                        <label className="block text-base md:text-lg mb-2 font-medium">Age</label>
-                        <input
-                          type="number"
-                          className="bg-gray-200/50 text-black h-8 md:h-10 focus:outline-none p-3 md:p-4 mb-5 rounded-2xl text-sm"
-                          placeholder="ex. 67"
-                          value={age}
-                          onChange={(e) => setAge(e.target.value)}
-                        />
-                        <label className="block text-base md:text-lg mb-2 font-medium">Sex</label>
-                        <div className="button-group flex gap-2 mb-4">
-                          <button
-                            type="button"
-                            onClick={() => handleSexSelection("Male")}
-                            className={`h-8 md:h-10 focus:outline-none p-3 md:p-4 rounded-2xl ${
-                              sex === "Male" ? "bg-gray-800 text-white" : "bg-gray-200 text-black"
-                            }`}
-                          >
-                            Male
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => handleSexSelection("Female")}
-                            className={`h-8 md:h-10 focus:outline-none p-3 md:p-4 rounded-2xl ${
-                              sex === "Female" ? "bg-gray-800 text-white" : "bg-gray-200 text-black"
-                            }`}
-                          >
-                            Female
-                          </button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="accordion mt-4">
-                    <button
-                      onClick={toggleAccordion2}
-                      className="border-2 text-black py-2 font-medium px-4 rounded-lg"
-                    >
-                      Patient Note {isAccordionOpen2 ? "-" : "+"}
-                    </button>
-                    {isAccordionOpen2 && (
-                      <div className="accordion-content p-4 mt-2 rounded-lg">
-                        <label className="block text-base md:text-lg mb-2 font-medium">Patient Note</label>
-                        <textarea
-                          className="bg-gray-200/50 text-black h-40 md:h-72 w-full md:text-sm focus:outline-none mb-5 p-3 md:p-4 text-xs resize-none rounded-2xl"
-                          placeholder="Enter any relevant information or notes..."
-                          value={input}
-                          onChange={(e) => setInput(e.target.value)}
-                        ></textarea>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              {step === 2 && userType === "Patient" && (
-                <div className="flex flex-col justify-center gap-3 mt-4 p-6">
-                  <h1 className="text-xl md:text-2xl text-left pb-10 font-medium flex items-center mt-8">
-                    <HeartIconSolid className="mr-2 h-5 md:h-6 w-5 md:w-6 text-red-500" /> Health Overview
-                  </h1>
-
-                  <label className="block text-base md:text-lg mb-2 font-medium">What is your current stage condition?</label>
-                  <select
-                    className="bg-gray-200/50 text-black h-8 md:h-10 focus:outline-none p-2 md:p-2 rounded-2xl text-sm mb-4"
-                    value={stage}
-                    onChange={(e) => setStage(e.target.value)}
-                  >
-                    <option value="" disabled>
-                      Select your stage
-                    </option>
-                    <option value="Stage 0">Stage 0</option>
-                    <option value="Stage I">Stage I</option>
-                    <option value="Stage II">Stage II</option>
-                    <option value="Stage III">Stage III</option>
-                    <option value="Stage IV">Stage IV</option>
-                  </select>
-
-                  <label className="block text-base md:text-lg mb-2 font-medium">
-                    Are there any biomarkers or genetic mutations associated with the cancer (e.g., BRCA, EGFR, HER2)?
-                  </label>
-                  <input
-                    type="text"
-                    className="bg-gray-200/50 text-black h-8 md:h-10 focus:outline-none p-3 md:p-4 mb-5 rounded-2xl text-sm"
-                    placeholder="e.g., BRCA, EGFR, HER2"
-                    value={biomarkers}
-                    onChange={(e) => setBiomarkers(e.target.value)}
-                  />
-
-                  <label className="block text-base md:text-lg mb-2 font-medium">
-                    Any other significant health conditions (Ex. Autoimmune disorders)
-                  </label>
-                  <input
-                    type="text"
-                    className="bg-gray-200/50 text-black h-8 md:h-10 focus:outline-none p-3 md:p-4 mb-5 rounded-2xl text-sm"
-                    placeholder="e.g., Autoimmune disorders"
-                    value={otherConditions}
-                    onChange={(e) => setOtherConditions(e.target.value)}
-                  />
-
-                  <label className="block text-base md:text-lg mb-2 font-medium">What is your Ecog score?</label>
-                  <select
-                    className="bg-gray-200/50 text-black h-8 md:h-10 focus:outline-none p-2 md:p-2 rounded-2xl text-sm mb-4"
-                    value={ecogScore}
-                    onChange={(e) => setEcogScore(e.target.value)}
-                  >
-                    <option value="" disabled>
-                      Select your Ecog score
-                    </option>
-                    <option value="0">0</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                  </select>
-
-                  <label className="block text-base md:text-lg mb-2 font-medium">
-                    Have you been previously diagnosed with other cancer?
-                  </label>
-                  <div className="button-group flex gap-2 mb-4">
-                    <button
-                      type="button"
-                      onClick={() => setPreviousCancer("Yes")}
-                      className={`h-8 md:h-10 focus:outline-none p-3 md:p-4 rounded-2xl ${
-                        previousCancer === "Yes" ? "bg-gray-800 text-white" : "bg-gray-200 text-black"
-                      }`}
-                    >
-                      Yes
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setPreviousCancer("No")}
-                      className={`h-8 md:h-10 focus:outline-none p-3 md:p-4 rounded-2xl ${
-                        previousCancer === "No" ? "bg-gray-800 text-white" : "bg-gray-200 text-black"
-                      }`}
-                    >
-                      No
-                    </button>
-                  </div>
-
-                  {previousCancer === "Yes" && (
-                    <>
-                      <label className="block text-base md:text-lg mb-2 font-medium">What type of cancer?</label>
-                      <input
-                        type="text"
-                        className="bg-gray-200/50 text-black h-8 md:h-10 focus:outline-none p-3 md:p-4 mb-5 rounded-2xl text-sm"
-                        placeholder="e.g., Lung Cancer"
-                        value={previousCancerType}
-                        onChange={(e) => setPreviousCancerType(e.target.value)}
-                      />
-                      <label className="block text-base md:text-lg mb-2 font-medium">What was the stage?</label>
-                      <select
-                        className="bg-gray-200/50 text-black h-8 md:h-10 focus:outline-none p-2 md:p-2 rounded-2xl text-sm mb-4"
-                        value={previousCancerStage}
-                        onChange={(e) => setPreviousCancerStage(e.target.value)}
-                      >
-                        <option value="" disabled>
-                          Select the stage
-                        </option>
-                        <option value="Stage 0">Stage 0</option>
-                        <option value="Stage I">Stage I</option>
-                        <option value="Stage II">Stage II</option>
-                        <option value="Stage III">Stage III</option>
-                        <option value="Stage IV">Stage IV</option>
-                      </select>
-                    </>
-                  )}
-                </div>
-              )}
-
-              {step === 3 && userType === "Patient" && (
-                <div className="flex flex-col justify-center gap-3 mt-4 p-6">
-                  <h1 className="text-xl md:text-2xl text-left pb-10 font-medium flex items-center mt-8">
-                    <ClipboardDocumentIcon className="mr-2 h-5 md:h-6 w-5 md:w-6 text-gray-500" />
-                    <span>Previous Treatments</span>
-                  </h1>
-
-                  <label className="block text-base md:text-lg mb-2 font-medium">
-                    Have you received any of the following treatments? Check all that apply
-                  </label>
-                  <div className="flex flex-col gap-2 mb-5">
-                    {["Chemotherapy", "Immunotherapy", "Surgery", "Radiation", "Targeted Cancer Therapy"].map(
-                      (treatment) => (
-                        <label key={treatment} className="inline-flex items-center">
-                          <input
-                            type="checkbox"
-                            className="form-checkbox"
-                            checked={treatmentTypes.includes(treatment)}
-                            onChange={() => handleTreatmentTypeSelection(treatment)}
-                          />
-                          <span className="ml-2">{treatment}</span>
-                        </label>
-                      )
-                    )}
-                    <label className="inline-flex items-center">
-                      <input
-                        type="checkbox"
-                        className="form-checkbox"
-                        checked={treatmentTypes.includes("Other")}
-                        onChange={() => handleTreatmentTypeSelection("Other")}
-                      />
-                      <span className="ml-2">Other</span>
-                    </label>
-                    {treatmentTypes.includes("Other") && (
-                      <input
-                        type="text"
-                        className="bg-gray-200/50 text-black h-8 md:h-10 focus:outline-none p-3 md:p-4 mb-5 rounded-2xl text-sm"
-                        placeholder="Please specify"
-                        value={otherTreatment}
-                        onChange={(e) => setOtherTreatment(e.target.value)}
-                      />
-                    )}
-                  </div>
-
-                  {treatmentTypes.length > 0 && (
-                    <>
-                      <label className="block text-base md:text-lg mb-2 font-medium">
-                        How did the cancer respond to previous treatments?
-                      </label>
-                      <input
-                        type="text"
-                        className="bg-gray-200/50 text-black h-8 md:h-10 focus:outline-none p-3 md:p-4 mb-5 rounded-2xl text-sm"
-                        placeholder="e.g., Stable, Improved"
-                        value={treatmentResponse}
-                        onChange={(e) => setTreatmentResponse(e.target.value)}
-                      />
-                    </>
-                  )}
-
-                  <label className="block text-base md:text-lg mb-2 font-medium">
-                    Do you have any adverse effects or allergies to certain treatments?
-                  </label>
-                  <input
-                    type="text"
-                    className="bg-gray-200/50 text-black h-8 md:h-10 focus:outline-none p-3 md:p-4 mb-5 rounded-2xl text-sm"
-                    placeholder="e.g., Nausea, Rash"
-                    value={adverseEffects}
-                    onChange={(e) => setAdverseEffects(e.target.value)}
-                  />
-                </div>
-              )}
-
-              {step === 4 && userType === "Patient" && (
-                <div className="flex flex-col justify-center gap-3 mt-4 p-6">
-                  <h1 className="text-xl md:text-2xl text-left pb-10 font-medium mt-8">Additional Information (Optional)</h1>
-
-                  <label className="block text-base md:text-lg mb-2 font-medium">
-                    Any other relevant information to improve match precision
-                  </label>
-                  <textarea
-                    className="bg-gray-200/50 text-black h-40 md:h-72 md:text-sm focus:outline-none mb-5 p-3 md:p-4 text-xs resize-none rounded-2xl flex-grow"
-                    placeholder="Enter any other relevant information..."
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                  ></textarea>
-                </div>
-              )}
-
-              <div className="flex justify-between mt-4 p-6">
-                {step > 0 && (
-                  <button
-                    type="button"
-                    onClick={handlePrevStep}
-                    className="bg-gray-400 py-2 px-4 md:px-6 text-white rounded-full hover:scale-95 mb-10 hover:bg-gray-800 cursor-pointer transition-all duration-200 ease-in-out"
-                  >
-                    <ArrowUturnLeftIcon className="h-5 w-5 font-extrabold" />
-                  </button>
-                )}
-                {step > 0 && step < 4 && userType === "Patient" && (
-                  <button
-                    type="button"
-                    onClick={handleNextStep}
-                    className="bg-[#67a2e1] py-2 px-4 md:px-6 text-white rounded-full hover:scale-95 hover:bg-[#5a91c4] cursor-pointer transition-all mb-10 duration-200 ease-in-out"
-                  >
-                    Next
-                  </button>
-                )}
-                {step === 2 && userType === "Physician" && (
-                  <button
-                    type="button"
-                    onClick={handleSubmit}
-                    className="bg-blue-500 py-2 px-4 md:px-6 mb-10 text-white rounded-full hover:scale-95 hover:bg-blue-800 cursor-pointer transition-all duration-200 ease-in-out"
-                  >
-                    Submit
-                  </button>
-                )}
-                {step === 4 && userType === "Patient" && (
-                  <button
-                    type="button"
-                    onClick={handleSubmit}
-                    className="bg-blue-500 py-2 px-4 md:px-6 mb-10 text-white rounded-full hover:scale-95 hover:bg-blue-800 cursor-pointer transition-all duration-200 ease-in-out"
-                  >
-                    Submit
-                  </button>
-                )}
               </div>
             </div>
-          </div>
+      
           
         )}
       </div>
@@ -845,7 +328,8 @@ const InputChat = () => {
         <div className="fixed inset-0 bg-black opacity-50 z-40" onClick={() => setIsFilterOpen(false)}></div>
       )}
 
-      {/* Filter Sidebar Integrated Here */}
+
+      {/* Advanced Search (filter sidebar) */}
       {isFilterOpen && (
         <div
           id="filter-sidebar"
@@ -866,9 +350,10 @@ const InputChat = () => {
     setIsFilterOpen(false);
     setUserType(""); // Reset userType when the filter is closed
   }}
->
-  <FaTimes />
+> 
+  <FaTimes /> 
 </button>
+
 
           </div>
           <div className="p-4">
@@ -892,6 +377,8 @@ const InputChat = () => {
                 onChange={(e) => setPI(e.target.value)}
               />
             </div>
+
+            {/* Handle search button for advanced search */}
             {(protocolID.trim() !== '' || PI.trim() !== '') && (
               <div className="mt-4">
                 <button
