@@ -262,7 +262,7 @@ const InputChat = () => {
                       )}
                     </div>
                     <div className="flex flex-col md:flex-row md:gap-4">
-                      <div className="flex gap-4 md:gap-6">
+                      <div className="flex gap-4 md:gap-6 content-center items-center">
                         <button
                           type="button"
                           onClick={() => HandlePatientMode()}
@@ -272,12 +272,12 @@ const InputChat = () => {
                           <p className="text-sm sm:text-md">Patient Mode</p>
                         </button>
                         <button
-                        className="mt-4 ml-1 max-w-[110px] md:ml-2 md:mt-0 flex items-center text-white bg-[#67a2e1] hover:bg-[#5a91c4] p-2 rounded-lg"
+                        className="ml-1 max-w-[110px] md:ml-2 md:mt-0 flex items-center content-center text-white bg-[#67a2e1] hover:bg-[#5a91c4] p-2 rounded-lg"
                         
                         onClick={() => {setIsFilterOpen(true), setUserType("Physician");}}
                       >
                         <FaSearch className=" mr-2 text-sm flex-shrink-0 flex-grow-0" /> 
-                        <p className="text-sm sm:text-md">Advanced</p>
+                        <p className="flex items-center content-center text-sm sm:text-md">Advanced</p>
                       </button>
                       </div>
                     </div>
@@ -285,7 +285,7 @@ const InputChat = () => {
                     <div
           className="flex flex-col mt-12 bg-slate-50 rounded-xl p-4 max-w-64 hover-effect"
           onClick={() => {
-            setGeneral("Show me trials for Breast Cancer with HER2 Mutation")
+            setGeneral("Stage 4 non-small cell lung cancer, positive for EGFR exon 19 deletion mutation, previously treated with osimertinib and chemotherapy. Looking for trials with alternative targeted therapies for EGFR-mutant tumors or immunotherapies with minimal off-target effects")
             handleSubmit()
             }
           }
@@ -294,13 +294,13 @@ const InputChat = () => {
                           <IoSearchCircle className=" h-5 w-5" />
                           <span className="font-semibold text-sm">Example</span>
                         </div>
-                        <h2 className="mt-3 text-sm">Show me trials for Breast Cancer with HER2 Mutation</h2>
+                        <h2 className="mt-3 text-sm">Lung Cancer Patient with EGFR Mutation</h2>
                       </div>
 
                       <div
           className="flex flex-col mt-12 bg-slate-50 rounded-xl p-4 max-w-64 hover-effect"
           onClick={() => {
-            setGeneral("Search for trials for Melanoma that metastasized to the lungs")
+            setGeneral("Castration-resistant prostate cancer, previously treated with enzalutamide and docetaxel, now resistant to androgen deprivation therapy. Biomarker status includes loss of PTEN and mutation in TP53. Seeking trials for experimental drugs targeting PI3K/AKT pathway or novel hormone therapy")
             handleSubmit()
             }
           }
@@ -309,7 +309,7 @@ const InputChat = () => {
                           <IoSearchCircle className=" h-5 w-5" />
                           <span className="font-semibold text-sm">Example</span>
                         </div>
-                        <h2 className="mt-3 text-sm">Search for trials for Melanoma that metastasized to the lungs</h2>
+                        <h2 className="mt-3 text-sm">Prostate Cancer with Previous Chemotherapy and Hormonal Resistance</h2>
                       </div>
                     </div>
                   </div>

@@ -21,42 +21,36 @@ import Popup from "@/components/Popup";
 const Patient = () => {
   // page states
   const [step, setStep] = useState(1);
-  const [userType, setUserType] = useState("");
-  const [general, setGeneral] = useState("");
   const router = useRouter();
-  const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const topRef = useRef<HTMLDivElement>(null);
+  const [error, setError] = useState(false);
 
   // search states
   const [condition, setCondition] = useState("");
   const [age, setAge] = useState("");
   const [stage, setStage] = useState("");
-  const [error, setError] = useState(false);
-  const [email, setEmail] = useState("");
   const [sex, setSex] = useState("");
-  const [ethnicity, setEthnicity] = useState("");
   const [biomarkers, setBiomarkers] = useState("");
   const [otherConditions, setOtherConditions] = useState("");
-  const [ecogScore, setEcogScore] = useState("");
   const [previousCancer, setPreviousCancer] = useState("");
   const [previousCancerType, setPreviousCancerType] = useState("");
-  const [previousCancerStage, setPreviousCancerStage] = useState("");
-  const [treatmentTypes, setTreatmentTypes] = useState<string[]>([]);
-  const [treatmentResponse, setTreatmentResponse] = useState("");
-  const [adverseEffects, setAdverseEffects] = useState("");
   const [otherTreatment, setOtherTreatment] = useState("");
-  const [otherKeywords, setOtherKeywords] = useState("");
-  const [PI, setPI] = useState("");
-  const [protocolID, setProtocolID] = useState("");
   const [state, setState] = useState("");
   const [hadTreatment, setHadTreatment] = useState("");
-  
+  const [treatmentTypes, setTreatmentTypes] = useState<string[]>([]);
+  const [interestedTreatment, setInterestedTreatment] = useState("");
+  const [interestedTreatmentVals, setInterestedTreatmentVals] = useState<string[]>([]);
+  const [otherInterested, setOtherInterested] = useState("");
+  const [notTreatment, setNotTreatment] = useState("");
+  const [notTreatmentVals, setNotTreatmentVals] = useState<string[]>([]);
+  const [otherNotInterested, setOtherNotInterested] = useState("");
+
+  // details "(i)"
   const [illnessOpen, setIllnessOpen] = useState(false);
   const [stageOpen, setStageOpen] = useState(false);
   const [biomarkersOpen, setBiomarkersOpen] = useState(false);
-  const [interestedTreatment, setInterestedTreatment] = useState("");
-  const [notTreatment, setNotTreatment] = useState("");
+
 
   const handleNextStep = () => {
     if (step === 1 && (!condition || !age || !sex)) {
@@ -72,25 +66,14 @@ const Patient = () => {
   const handlePrevStep = () => {
     if (step === 1) {
       setAge("");
-      setInput("");
-      setUserType("");
       setCondition("");
       setStage("");
-      setEmail("");
       setSex("");
-      setEthnicity("");
       setBiomarkers("");
       setOtherConditions("");
-      setEcogScore("");
       setPreviousCancer("");
       setPreviousCancerType("");
-      setPreviousCancerStage("");
-      setTreatmentResponse("");
-      setAdverseEffects("");
       setOtherTreatment("");
-      setOtherKeywords("");
-      setPI("");
-      setProtocolID("");
       setState("");
     }
     if (topRef.current) {
@@ -111,8 +94,8 @@ const handleSexSelection = (selectedSex: string) => {
     setSex(selectedSex);
   };
 
-  const handleTreatmentTypeSelection = (type: string) => {
-    setTreatmentTypes((prev) =>
+  const handleTreatmentTypeSelection = (type: string, varState: any) => {
+    varState((prev: string[]) =>
       prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
     );
   };
@@ -126,45 +109,35 @@ const handleSexSelection = (selectedSex: string) => {
         try {
           toast("Inputting Info...", { position: "top-center" });
     
-          const inputTrim = input.trim();
           const conditionTrim = condition.trim();
           const stageTrim = stage.trim();
-          const emailTrim = email.trim();
           const send_age = age;
           const stateTrim = state.trim();
     
-          setInput("");
+
           setCondition("");
           setAge("");
           setStage("");
-          setEmail("");
           // TODO: removing phisician mode
           const requestBody = {
             // parameters in all searches
-            userType: userType,
             condition: conditionTrim,
             age: send_age,
             sex: sex,
-            patient_id: "patient",
-            patient_info: inputTrim,
-            email: emailTrim,
             stage: stageTrim,
-            ethnicity: ethnicity,
             biomarkers: biomarkers.trim(),
             otherConditions: otherConditions.trim(),
-            ecogScore: ecogScore,
             previousCancer: previousCancer,
             previousCancerType: previousCancerType.trim(),
-            previousCancerStage: previousCancerStage,
             previousTreatments: treatmentTypes.includes("Other")
               ? [...treatmentTypes.filter((t) => t !== "Other"), otherTreatment.trim()]
               : treatmentTypes,
-            treatmentResponse: treatmentResponse.trim(),
-            adverseEffects: adverseEffects.trim(),
-            otherKeywords: otherKeywords.trim(),
-            protocolID: protocolID.trim(),
-            pi: PI.trim(),
-            general: general.trim(),
+            treatmentsInterested: interestedTreatmentVals.includes("Other")
+              ? [...treatmentTypes.filter((t) => t !== "Other"), otherInterested.trim()]
+              : treatmentTypes,
+            treatmentsNotInterested: notTreatmentVals.includes("Other")
+              ? [...notTreatmentVals.filter((t) => t !== "Other"), otherNotInterested.trim()]
+              : notTreatmentVals,
             state: stateTrim
           };
           console.log(requestBody);
@@ -301,7 +274,7 @@ const handleSexSelection = (selectedSex: string) => {
           style={{ height: stageOpen ? 'auto' : '0' }}
           className="block text-base md:text-sm mb-2 font-small italic py-2"
         >
-          <span>The stage tells us how much the illness has spread. Here's a simple guide:  </span>
+          <span>The stage tells us how much the illness has spread.  </span>
         </label>
       </div>
                       <select
@@ -316,38 +289,6 @@ const handleSexSelection = (selectedSex: string) => {
                         <option value="Medium Risk">Medium Risk</option>
                         <option value="High Risk">High Risk</option>
                       </select>
-                      
-{/*     
-                      <label className="block text-base md:text-lg mb-2 font-medium">
-                        What is your ethnicity? (optional)
-                      </label>
-                      <select
-                        className="bg-gray-200/50 text-black h-8 md:h-10 focus:outline-none p-2 md:p-2 rounded-2xl text-sm mb-4"
-                        value={ethnicity}
-                        onChange={(e) => setEthnicity(e.target.value)}
-                      >
-                        <option value="" disabled>
-                          Select your ethnicity
-                        </option>
-                        <option value="American Indian or Alaska Native">American Indian or Alaska Native</option>
-                        <option value="Asian">Asian</option>
-                        <option value="Black">Black</option>
-                        <option value="Hispanic, Latino or Spanish origin">Hispanic, Latino or Spanish origin</option>
-                        <option value="Middle Eastern or North African">Middle Eastern or North African</option>
-                        <option value="Native Hawaiian or Other Pacific Islander">Native Hawaiian or Other Pacific Islander</option>
-                        <option value="White">White</option>
-                        <option value="More than one race/ethnicity">More than one race/ethnicity</option>
-                        <option value="Prefer not to say">Prefer not to say</option>
-                      </select> */}
-    
-                      {/* <label className="block text-base md:text-lg mb-2 font-medium">What is your email? (optional)</label>
-                      <input
-                        type="email"
-                        className="bg-gray-200/50 text-black h-8 md:h-10 focus:outline-none p-3 md:p-4 mb-5 rounded-2xl text-sm"
-                        placeholder="ex. email@example.com"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                      /> */}
                     </div>
                   )}
     
@@ -400,24 +341,6 @@ const handleSexSelection = (selectedSex: string) => {
                         value={otherConditions}
                         onChange={(e) => setOtherConditions(e.target.value)}
                       />
-{/*     
-                      <label className="block text-base md:text-lg mb-2 font-medium">What is your Ecog score?</label>
-                      <select
-                        className="bg-gray-200/50 text-black h-8 md:h-10 focus:outline-none p-2 md:p-2 rounded-2xl text-sm mb-4"
-                        value={ecogScore}
-                        onChange={(e) => setEcogScore(e.target.value)}
-                      >
-                        <option value="" disabled>
-                          Select your Ecog score
-                        </option>
-                        <option value="0">0</option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                      </select>
-     */}
                       <label className="block text-base md:text-lg mb-2 font-medium">
                         Have you ever had cancer before, or has your current cancer come back?
                       </label>
@@ -487,7 +410,7 @@ const handleSexSelection = (selectedSex: string) => {
                                 type="checkbox"
                                 className="form-checkbox"
                                 checked={treatmentTypes.includes(treatment)}
-                                onChange={() => handleTreatmentTypeSelection(treatment)}
+                                onChange={() => handleTreatmentTypeSelection(treatment, setTreatmentTypes)}
                               />
                               <span className="ml-2">{treatment}</span>
                             </label>
@@ -498,7 +421,7 @@ const handleSexSelection = (selectedSex: string) => {
                             type="checkbox"
                             className="form-checkbox"
                             checked={treatmentTypes.includes("Other")}
-                            onChange={() => handleTreatmentTypeSelection("Other")}
+                            onChange={() => handleTreatmentTypeSelection("Other", setTreatmentTypes)}
                           />
                           <span className="ml-2">Other</span>
                         </label>
@@ -545,7 +468,7 @@ const handleSexSelection = (selectedSex: string) => {
                                 type="checkbox"
                                 className="form-checkbox"
                                 checked={treatmentTypes.includes(treatment)}
-                                onChange={() => handleTreatmentTypeSelection(treatment)}
+                                onChange={() => handleTreatmentTypeSelection(treatment, setInterestedTreatmentVals)}
                               />
                               <span className="ml-2">{treatment}</span>
                             </label>
@@ -556,7 +479,7 @@ const handleSexSelection = (selectedSex: string) => {
                             type="checkbox"
                             className="form-checkbox"
                             checked={treatmentTypes.includes("Other")}
-                            onChange={() => handleTreatmentTypeSelection("Other")}
+                            onChange={() => handleTreatmentTypeSelection("Other", setInterestedTreatmentVals)}
                           />
                           <span className="ml-2">Other</span>
                         </label>
@@ -565,8 +488,8 @@ const handleSexSelection = (selectedSex: string) => {
                             type="text"
                             className="bg-gray-200/50 text-black h-8 md:h-10 focus:outline-none p-3 md:p-4 mb-5 rounded-2xl text-sm"
                             placeholder="Please specify"
-                            value={otherTreatment}
-                            onChange={(e) => setOtherTreatment(e.target.value)}
+                            value={otherInterested}
+                            onChange={(e) => setOtherInterested(e.target.value)}
                           />
                         )}
                       </div>
@@ -603,7 +526,7 @@ const handleSexSelection = (selectedSex: string) => {
                                 type="checkbox"
                                 className="form-checkbox"
                                 checked={treatmentTypes.includes(treatment)}
-                                onChange={() => handleTreatmentTypeSelection(treatment)}
+                                onChange={() => handleTreatmentTypeSelection(treatment, setNotTreatmentVals)}
                               />
                               <span className="ml-2">{treatment}</span>
                             </label>
@@ -614,7 +537,7 @@ const handleSexSelection = (selectedSex: string) => {
                             type="checkbox"
                             className="form-checkbox"
                             checked={treatmentTypes.includes("Other")}
-                            onChange={() => handleTreatmentTypeSelection("Other")}
+                            onChange={() => handleTreatmentTypeSelection("Other", setNotTreatmentVals)}
                           />
                           <span className="ml-2">Other</span>
                         </label>
@@ -623,8 +546,8 @@ const handleSexSelection = (selectedSex: string) => {
                             type="text"
                             className="bg-gray-200/50 text-black h-8 md:h-10 focus:outline-none p-3 md:p-4 mb-5 rounded-2xl text-sm"
                             placeholder="Please specify"
-                            value={otherTreatment}
-                            onChange={(e) => setOtherTreatment(e.target.value)}
+                            value={otherNotInterested}
+                            onChange={(e) => setOtherNotInterested(e.target.value)}
                           />
                         )}
                       </div>
