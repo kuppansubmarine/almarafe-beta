@@ -51,6 +51,14 @@ const InputChat = () => {
   const [PI, setPI] = useState("");
   const [protocolID, setProtocolID] = useState("");
 
+  const [allowSubmit, setAllowSubmit] = useState(false);
+
+  useEffect(() => {
+    if (allowSubmit) {
+      handleSubmit();
+    }
+  }, [allowSubmit]);
+
   const handleNextStep = () => {
     if (step === 1 && userType === "Patient" && (!condition || !age || !sex)) {
       toast.error("Please fill in all required fields before proceeding!");
@@ -282,10 +290,10 @@ const InputChat = () => {
                     </div>
                     <div className="flex gap-5">
                     <div
-          className="flex flex-col mt-12 bg-slate-50 rounded-xl p-4 max-w-120 hover-effect"
+          className="flex flex-col mt-12 bg-slate-50 rounded-xl p-4 max-w-64 hover-effect"
           onClick={() => {
             setGeneral("Show me trials for Stage 4 non-small cell lung cancer, positive for EGFR exon 19 deletion mutation, previously treated with osimertinib and chemotherapy. Looking for trials with alternative targeted therapies for EGFR-mutant tumors or immunotherapies with minimal off-target effects.")
-            handleSubmit()
+            setAllowSubmit(true);
             }
           }
         >
@@ -295,12 +303,11 @@ const InputChat = () => {
                         </div>
                         <h2 className="mt-3 text-sm">Show me trials for Stage 4 non-small cell lung cancer, positive for EGFR exon 19 deletion mutation, previously treated with osimertinib and chemotherapy. Looking for trials with alternative targeted therapies for EGFR-mutant tumors or immunotherapies with minimal off-target effects.</h2>
                       </div>
-
                       <div
-          className="flex flex-col mt-12 bg-slate-50 rounded-xl p-4 max-w-120 hover-effect"
+          className="flex flex-col mt-12 bg-slate-50 rounded-xl p-4 max-w-64 hover-effect"
           onClick={() => {
-            setGeneral("Give me Phase II and Phase III trials for Stage 3 colorectal cancer with a KRAS G12C mutation, previously treated with FOLFOX and irinotecan, now showing signs of recurrence. Looking for trials involving KRAS inhibitors, combination immunotherapies, or other novel targeted treatments for KRAS-mutant tumors. ")
-            handleSubmit()
+            setGeneral("Give me Phase II and Phase III trials for Stage 3 colorectal cancer with a KRAS G12C mutation, previously treated with FOLFOX and irinotecan, now showing signs of recurrence. Looking for trials involving KRAS inhibitors, combination immunotherapies, or other novel targeted treatments for KRAS-mutant tumors. .")
+            setAllowSubmit(true);
             }
           }
         >
