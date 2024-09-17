@@ -121,6 +121,7 @@ const handleSexSelection = (selectedSex: string) => {
           // TODO: removing phisician mode
           const requestBody = {
             // parameters in all searches
+            userType: "patient",
             condition: conditionTrim,
             age: send_age,
             sex: sex,
@@ -467,7 +468,7 @@ const handleSexSelection = (selectedSex: string) => {
                               <input
                                 type="checkbox"
                                 className="form-checkbox"
-                                checked={treatmentTypes.includes(treatment)}
+                                checked={interestedTreatmentVals.includes(treatment)}
                                 onChange={() => handleTreatmentTypeSelection(treatment, setInterestedTreatmentVals)}
                               />
                               <span className="ml-2">{treatment}</span>
@@ -478,7 +479,7 @@ const handleSexSelection = (selectedSex: string) => {
                           <input
                             type="checkbox"
                             className="form-checkbox"
-                            checked={treatmentTypes.includes("Other")}
+                            checked={interestedTreatmentVals.includes("Other")}
                             onChange={() => handleTreatmentTypeSelection("Other", setInterestedTreatmentVals)}
                           />
                           <span className="ml-2">Other</span>
@@ -525,7 +526,7 @@ const handleSexSelection = (selectedSex: string) => {
                               <input
                                 type="checkbox"
                                 className="form-checkbox"
-                                checked={treatmentTypes.includes(treatment)}
+                                checked={notTreatmentVals.includes(treatment)}
                                 onChange={() => handleTreatmentTypeSelection(treatment, setNotTreatmentVals)}
                               />
                               <span className="ml-2">{treatment}</span>
@@ -536,12 +537,12 @@ const handleSexSelection = (selectedSex: string) => {
                           <input
                             type="checkbox"
                             className="form-checkbox"
-                            checked={treatmentTypes.includes("Other")}
+                            checked={notTreatmentVals.includes("Other")}
                             onChange={() => handleTreatmentTypeSelection("Other", setNotTreatmentVals)}
                           />
                           <span className="ml-2">Other</span>
                         </label>
-                        {treatmentTypes.includes("Other") && (
+                        {otherNotInterested.includes("Other") && (
                           <input
                             type="text"
                             className="bg-gray-200/50 text-black h-8 md:h-10 focus:outline-none p-3 md:p-4 mb-5 rounded-2xl text-sm"
