@@ -176,7 +176,6 @@ const handleSexSelection = (selectedSex: string) => {
         // main page
         <>
           <div>
-            <Popup />
             {isLoading ? (
               <AnalyzingPage />
             ) : error ? (

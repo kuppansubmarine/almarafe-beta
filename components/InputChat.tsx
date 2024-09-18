@@ -290,7 +290,7 @@ const InputChat = () => {
                     </div>
                     <div className="flex gap-5">
                     <div
-          className="flex flex-col mt-12 bg-slate-50 rounded-xl p-4 max-w-64 hover-effect"
+          className="flex flex-col mt-12 bg-slate-50 rounded-xl p-4 max-w-120 hover-effect"
           onClick={() => {
             setGeneral("Show me trials for Stage 4 non-small cell lung cancer, positive for EGFR exon 19 deletion mutation, previously treated with osimertinib and chemotherapy. Looking for trials with alternative targeted therapies for EGFR-mutant tumors or immunotherapies with minimal off-target effects.")
             setAllowSubmit(true);
@@ -301,12 +301,12 @@ const InputChat = () => {
                           <IoSearchCircle className=" h-5 w-5" />
                           <span className="font-semibold text-sm">Example</span>
                         </div>
-                        <h2 className="mt-3 text-sm">Show me trials for Stage 4 non-small cell lung cancer, positive for EGFR exon 19 deletion mutation, previously treated with osimertinib and chemotherapy. Looking for trials with alternative targeted therapies for EGFR-mutant tumors or immunotherapies with minimal off-target effects.</h2>
+                        <h2 className="mt-3 text-sm">Give me Phase I or Phase II trials for Acute myeloid leukemia, relapsed after bone marrow transplant, with FLT3-ITD mutation and secondary resistance to midostaurin. Interested in trials involving novel FLT3 inhibitors or combination therapies targeting secondary resistance mechanisms.</h2>
                       </div>
                       <div
-          className="flex flex-col mt-12 bg-slate-50 rounded-xl p-4 max-w-64 hover-effect"
+          className="flex flex-col mt-12 bg-slate-50 rounded-xl p-4 max-w-120 hover-effect"
           onClick={() => {
-            setGeneral("Give me Phase II and Phase III trials for Stage 3 colorectal cancer with a KRAS G12C mutation, previously treated with FOLFOX and irinotecan, now showing signs of recurrence. Looking for trials involving KRAS inhibitors, combination immunotherapies, or other novel targeted treatments for KRAS-mutant tumors. .")
+            setGeneral("Give me Phase I or Phase II trials for Acute myeloid leukemia, relapsed after bone marrow transplant, with FLT3-ITD mutation and secondary resistance to midostaurin. Interested in trials involving novel FLT3 inhibitors or combination therapies targeting secondary resistance mechanisms.")
             setAllowSubmit(true);
             }
           }
@@ -315,7 +315,7 @@ const InputChat = () => {
                           <IoSearchCircle className=" h-5 w-5" />
                           <span className="font-semibold text-sm">Example</span>
                         </div>
-                        <h2 className="mt-3 text-sm">Give me Phase II and Phase III trials for Stage 3 colorectal cancer with a KRAS G12C mutation, previously treated with FOLFOX and irinotecan, now showing signs of recurrence. Looking for trials involving KRAS inhibitors, combination immunotherapies, or other novel targeted treatments for KRAS-mutant tumors. </h2>
+                        <h2 className="mt-3 text-sm">Give me Phase I or Phase II trials for Acute myeloid leukemia, relapsed after bone marrow transplant, with FLT3-ITD mutation and secondary resistance to midostaurin. Interested in trials involving novel FLT3 inhibitors or combination therapies targeting secondary resistance mechanisms.</h2>
                       </div>
                     </div>
                   </div>
