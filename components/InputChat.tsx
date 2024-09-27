@@ -8,6 +8,8 @@ import {
   HeartIcon as HeartIconOutline,
   EyeDropperIcon,
 } from "@heroicons/react/24/outline";
+import im from '@/Images/close.png';
+import Image from "next/image";
 import { FaUserMd, FaUser, FaSearch, FaBookMedical, FaTimes } from "react-icons/fa";
 import { IoSearchCircle } from "react-icons/io5";
 import { HeartIcon as HeartIconSolid, ClipboardDocumentIcon } from "@heroicons/react/24/solid";
@@ -36,22 +38,26 @@ const InputChat = () => {
   const [error, setError] = useState(false);
   const [email, setEmail] = useState("");
   const [sex, setSex] = useState("");
-  const [ethnicity, setEthnicity] = useState("");
   const [biomarkers, setBiomarkers] = useState("");
   const [otherConditions, setOtherConditions] = useState("");
-  const [ecogScore, setEcogScore] = useState("");
   const [previousCancer, setPreviousCancer] = useState("");
   const [previousCancerType, setPreviousCancerType] = useState("");
   const [previousCancerStage, setPreviousCancerStage] = useState("");
   const [treatmentTypes, setTreatmentTypes] = useState<string[]>([]);
-  const [treatmentResponse, setTreatmentResponse] = useState("");
-  const [adverseEffects, setAdverseEffects] = useState("");
   const [otherTreatment, setOtherTreatment] = useState("");
-  const [otherKeywords, setOtherKeywords] = useState("");
   const [PI, setPI] = useState("");
   const [protocolID, setProtocolID] = useState("");
-
+  const [intervention, setIntervention] = useState("");
+  const [drug, setDrug] = useState("");
+  const [phases, setPhases] = useState<string[]>([]);
   const [allowSubmit, setAllowSubmit] = useState(false);
+  const [excludedTherapy, setExcludedTherapy] = useState("");
+  const [excludedTherapies, setExcludedTherapies] = useState<string[]>([]);
+  const [priorTherapy, setPriorTherapy] = useState("");
+  const [priorTherapies, setPriorTherapies] = useState<string[]>([]);
+  const [relapsed, setRelapsed] = useState(false);
+  const [refractory, setRefractory] = useState(false);
+  const [healthProblems, setHealthProblems] = useState("");
 
   useEffect(() => {
     if (allowSubmit) {
@@ -79,17 +85,12 @@ const InputChat = () => {
       setStage("");
       setEmail("");
       setSex("");
-      setEthnicity("");
       setBiomarkers("");
       setOtherConditions("");
-      setEcogScore("");
       setPreviousCancer("");
       setPreviousCancerType("");
       setPreviousCancerStage("");
-      setTreatmentResponse("");
-      setAdverseEffects("");
       setOtherTreatment("");
-      setOtherKeywords("");
       setPI("");
       setProtocolID("");
     }
@@ -103,11 +104,24 @@ const InputChat = () => {
     setSex(selectedSex);
   };
 
-  const handleTreatmentTypeSelection = (type: string) => {
-    setTreatmentTypes((prev) =>
+  const handleTreatmentTypeSelection = (type: string, varState: any) => {
+    varState((prev: string[]) =>
       prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
     );
   };
+
+  const handleAddItem = (therapy: string, setTherapy: any, setTherapyArray: any) => {
+    if (therapy.length > 0) {
+      setTherapyArray((prev: string[]) =>
+        prev.includes(therapy) ? prev.filter((t) => t !== therapy) : [...prev, therapy]
+      );
+      setTherapy("");
+    }
+  }
+
+  const handleClose = (therapy: string, setTherapyArray: any) => {
+    setTherapyArray((prev: string[]) => prev.filter((t) => t !== therapy));
+  }
 
   const HandlePatientMode = () => {
     router.push(`/patient`);
@@ -115,12 +129,12 @@ const InputChat = () => {
   // massive function to submit patient information from patient or phisician mode
   const handleSubmit = async () => {
     if (isFilterOpen) {
-      if (!condition && !protocolID && !PI) {
-        toast.error("Condition, Protocol ID or PI must be filled in to search!");
+      if (!(condition || protocolID || PI || drug || intervention || biomarkers)) {
+        toast.error("Please fill in at least one of the following:\n\nCondition, Biomarkers, Intervention, Study Drug, Protocol ID, PI");
         return;
       }
-      if (condition && protocolID) {
-        toast.error("You can only search by Condition or Protocol ID, not both!");
+      if ((condition || intervention || biomarkers || drug) && protocolID) {
+        toast.error("You can only search by [Condition, Intervention, Biomarkers, Drug] or Protocol ID, not both!");
         return;
       }
     }
@@ -128,43 +142,35 @@ const InputChat = () => {
     try {
       toast("Inputting Info...", { position: "top-center" });
 
-      const inputTrim = input.trim();
-      const conditionTrim = condition.trim();
-      const stageTrim = stage.trim();
-      const emailTrim = email.trim();
-      const send_age = age;
-
       setInput("");
       setCondition("");
-      setAge("");
-      setStage("");
-      setEmail("");
+
       // TODO: removing phisician mode
       const requestBody = {
         // parameters in all searches
+
         userType: userType,
-        condition: conditionTrim,
-        age: send_age,
-        sex: sex,
         patient_id: "patient",
-        patient_info: inputTrim,
-        email: emailTrim,
-        stage: stageTrim,
-        ethnicity: ethnicity,
+
+        // strings
+        condition: condition.trim(),
         biomarkers: biomarkers.trim(),
-        otherConditions: otherConditions.trim(),
-        ecogScore: ecogScore,
-        previousCancer: previousCancer,
-        previousCancerType: previousCancerType.trim(),
-        previousCancerStage: previousCancerStage,
-        previousTreatments: treatmentTypes.includes("Other")
-          ? [...treatmentTypes.filter((t) => t !== "Other"), otherTreatment.trim()]
-          : treatmentTypes,
-        treatmentResponse: treatmentResponse.trim(),
-        adverseEffects: adverseEffects.trim(),
-        otherKeywords: otherKeywords.trim(),
+        intervention: intervention.trim(),
+        drug: drug.trim(),
         protocolID: protocolID.trim(),
         pi: PI.trim(),
+        otherConditions: otherConditions.trim(),
+        // string arrays
+        phases: phases,
+        excludedTherapies: excludedTherapies,
+        priorTherapies: priorTherapies,
+        // boolean
+        relapsed: relapsed,
+        refractory: refractory,
+
+
+        
+
         general: general.trim(),
       };
       console.log(requestBody);
@@ -344,7 +350,7 @@ const InputChat = () => {
           } transition-transform duration-300 ease-in-out`}
           style={{ width: '375px' }}
         >
-          <div className="p-4 flex justify-between items-center">
+          <div className="p-4 flex justify-between items-center shadow">
             <h2 className="text-lg font-semibold flex items-center gap-2">
               <MdTune className="text-2xl" />
               Advanced Search
@@ -359,10 +365,205 @@ const InputChat = () => {
 > 
   <FaTimes /> 
 </button>
-
-
           </div>
-          <div className="p-4">
+
+
+          <div className="p-4 overflow-y-auto h-4/5">
+
+          <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700">Condition</label>
+              <input
+                type="text"
+                className="mt-1 p-2 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                placeholder="ex. Stage IV Breast Cancer"
+                value={condition}
+                onChange={(e) => setCondition(e.target.value)}
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700">Biomarkers</label>
+              <input
+                type="text"
+                className="mt-1 p-2 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                placeholder="ex. CA549"
+                value={biomarkers}
+                onChange={(e) => setBiomarkers(e.target.value)}
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700">Intervention</label>
+              <input
+                type="text"
+                className="mt-1 p-2 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                placeholder="ex. Surgery"
+                value={intervention}
+                onChange={(e) => setIntervention(e.target.value)}
+              />
+            </div>
+
+            <label className="text-sm font-medium text-gray-700">Phase</label>
+            <div className="flex flex-row flex-wrap gap-2 mb-5">
+                        {["I", "II", "III"].map(
+                          (treatment, key) => (
+                            <div className="flex w-fit px-2" key={key}>
+                            <label key={treatment} className="flex items-center">
+                              <input
+                                type="checkbox"
+                                className="form-checkbox"
+                                checked={phases.includes(treatment)}
+                                onChange={() => handleTreatmentTypeSelection(treatment, setPhases)}
+                              />
+                              <span className="flex ml-2">Phase {treatment}</span>
+                            </label>
+                            </div>
+                          )
+                        )}
+                        </div>
+                        
+                        
+
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700">Study Drug</label>
+              <input
+                type="text"
+                className="mt-1 p-2 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                placeholder="ex. Dostarlimab"
+                value={drug}
+                onChange={(e) => setDrug(e.target.value)}
+              />
+            </div>
+
+            <div className="mb-4">
+  <label className="block text-sm font-medium text-gray-700">Excluded Therapies</label>
+  <div className="flex items-center content-center">
+    <input
+      type="text"
+      className="mt-1 p-2 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+      placeholder="ex. Chemotherapy"
+      value={excludedTherapy}
+      onChange={(e) => setExcludedTherapy(e.target.value)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" && excludedTherapy.length > 0) {
+          handleAddItem(excludedTherapy, setExcludedTherapy, setExcludedTherapies);
+        }
+      }}
+    />
+    <button
+      onClick={() => excludedTherapy.length > 0 && handleAddItem(excludedTherapy, setExcludedTherapy, setExcludedTherapies)}
+      className={`w-20 h-8 rounded-md shadow-sm transition-colors duration-200 m-2 ${
+        excludedTherapy.length > 0
+          ? 'bg-[#67a2e1] text-white hover:bg-[#5590ce]'
+          : 'bg-gray-400 text-gray-200 cursor-not-allowed'
+      }`}
+    >
+      Add
+    </button>
+  </div>
+  <div className="flex flex-wrap gap-2 mt-3"> {/* Added flex-wrap and gap for better layout */}
+    {excludedTherapies.map((treatment, key) => (
+      <div
+        className="flex justify-between items-center p-2 border rounded-md bg-gray-100"
+        key={key}
+        style={{ maxWidth: '280px' }} // Set a max width for wrapping
+      >
+        <p className="italic truncate pr-2">{treatment}</p> {/* Added truncate for long text */}
+        <p onClick={() => handleClose(treatment, setExcludedTherapies)} className="cursor-pointer ml-2">
+          <Image className="w-3 h-3 mr-2" src={im} alt="close" />
+        </p>
+      </div>
+    ))}
+  </div>
+</div>
+
+            <div className="mb-4">
+  <label className="block text-sm font-medium text-gray-700">Prior Lines of Therapy</label>
+  <div className="flex items-center content-center">
+    <input
+      type="text"
+      className="mt-1 p-2 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+      placeholder="ex. Chemotherapy"
+      value={priorTherapy}
+      onChange={(e) => setPriorTherapy(e.target.value)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" && priorTherapy.length > 0) {
+          handleAddItem(priorTherapy, setPriorTherapy, setPriorTherapies);
+        }
+      }}
+    />
+    <button
+      onClick={() => priorTherapy.length > 0 && handleAddItem(priorTherapy, setPriorTherapy, setPriorTherapies)}
+      className={`w-20 h-8 rounded-md shadow-sm transition-colors duration-200 m-2 ${
+        priorTherapy.length > 0
+          ? 'bg-[#67a2e1] text-white hover:bg-[#5590ce]'
+          : 'bg-gray-400 text-gray-200 cursor-not-allowed'
+      }`}
+    >
+      Add
+    </button>
+  </div>
+  <div className="flex flex-wrap gap-2 mt-3"> {/* Added flex-wrap and gap for better layout */}
+    {priorTherapies.map((treatment, key) => (
+      <div
+        className="flex justify-between items-center p-2 border rounded-md bg-gray-100"
+        key={key}
+        style={{ maxWidth: '280px' }} // Set a max width for wrapping
+      >
+        <p className="italic truncate pr-2">{treatment}</p> {/* Added truncate for long text */}
+        <p onClick={() => handleClose(treatment, setPriorTherapies)} className="cursor-pointer ml-2">
+          <Image className="w-3 h-3 mr-2" src={im} alt="close" />
+        </p>
+      </div>
+    ))}
+  </div>
+</div>
+
+<div className="flex w-full">
+<div className="w-full">
+<label className="text-sm font-medium text-gray-700">Relapsed?</label>
+<div className="flex flex-row flex-wrap gap-2 mb-5">
+  <div className="flex w-fit px-2">
+    <label className="flex items-center">
+      <input
+        onChange={(e) => setRelapsed(e.target.checked)} // Correctly handle checkbox state
+        type="checkbox"
+        className="form-checkbox"
+        checked={relapsed} // Bind the checkbox to the `relapsed` state
+      />
+      <span className="flex ml-2">Yes</span> {/* Display label based on state */}
+    </label>
+  </div>
+</div>
+</div>
+
+<div className="w-full">
+<label className="text-sm font-medium text-gray-700">Refractory?</label>
+<div className="flex flex-row flex-wrap gap-2 mb-5">
+  <div className="flex w-fit px-2">
+    <label className="flex items-center">
+      <input
+        onChange={(e) => setRefractory(e.target.checked)} // Correctly handle checkbox state
+        type="checkbox"
+        className="form-checkbox"
+        checked={refractory} // Bind the checkbox to the `relapsed` state
+      />
+      <span className="flex ml-2">Yes</span> {/* Display label based on state */}
+    </label>
+  </div>
+</div>
+</div>
+</div>
+
+
+<div className="mb-4">
+  <label className="block text-sm font-medium text-gray-700">Other health problems</label>
+  <textarea
+    className="mt-1 p-2 block w-full h-20 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+    placeholder="ex. Diabetes"
+    value={otherConditions}
+    onChange={(e) => setOtherConditions(e.target.value)}
+  />
+</div>
+
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700">Protocol Number</label>
               <input
@@ -373,6 +574,7 @@ const InputChat = () => {
                 onChange={(e) => setProtocolID(e.target.value)}
               />
             </div>
+
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700">Principal Investigator</label>
               <input
@@ -383,19 +585,17 @@ const InputChat = () => {
                 onChange={(e) => setPI(e.target.value)}
               />
             </div>
+            </div>
+            
 
             {/* Handle search button for advanced search */}
-            {(protocolID.trim() !== '' || PI.trim() !== '') && (
-              <div className="mt-4">
+
+              <div className="h-full p-2"
+              style={{ boxShadow: "0 -4px 6px rgba(0, 0, 0, 0.1)" }}>
                 <button
                   onClick={() => {
                     if (protocolID && PI) {
                       toast.error("Please search by either Protocol ID or PI, not both.");
-                      return;
-                    }
-
-                    if (!protocolID && !PI) {
-                      toast.error("Please provide either a Protocol ID or a PI.");
                       return;
                     }
 
@@ -407,8 +607,8 @@ const InputChat = () => {
                   Search
                 </button>
               </div>
-            )}
-          </div>
+          
+          
         </div>
       )}
 
