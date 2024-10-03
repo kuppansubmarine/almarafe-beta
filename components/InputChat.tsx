@@ -184,7 +184,7 @@ const handleRadioClick = (value: any, stateSetter: { (value: React.SetStateActio
 
       // make actual request
       setIsLoading(true);
-      const response = await fetch("https://almarabeta.azurewebsites.net/api/search", {
+      const response = await fetch("http://127.0.0.1:5000/api/search", {
         method: "POST",
         credentials: "include",
         headers: {
@@ -244,20 +244,20 @@ const handleRadioClick = (value: any, stateSetter: { (value: React.SetStateActio
             </div>
             <div className="rounded-xl flex flex-col justify-center">
               {step === 0 && (
-                <div className="flex flex-col items-left justify-center mt-12 md:mt-24 mb-10 md:mb-30 p-6">
+                <div className="flex flex-col items-center justify-center mt-12 md:mt-24 mb-10 md:mb-30 p-6">
                   <h1 className="text-4xl md:text-6xl font-bold text-[#313131]">Almara</h1>
                   <h2 className="text-md md:text-2xl text-gray-500 mt-2">
                     AI Search Engine for <span className="text-[#67a2e1] font-semibold">Clinical Trials</span>
                   </h2>
 
-                  <div className="flex flex-col items-left mt-7 w-full  md:px-0">
+                  <div className="flex flex-col items-center mt-7 w-full  md:px-0">
                     <div className="relative w-full md:w-[50rem] mb-4">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <FaBookMedical className="w-6 md:w-6 h-6 md:h-6 text-[#5299e6]" />
                       </div>
                       <input
                         type="text"
-                        className="bg-white border border-gray-300 focus:border-[#67a2e1] focus:ring-2 focus:ring-[#67a2e1] text-black h-10 md:h-12 w-full focus:outline-none pl-14 md:pl-16 pr-8 md:pr-12 rounded-xl text-sm md:text-lg transition duration-200"
+                        className="bg-white  border-2  focus:border-[#67a2e1] focus:ring-2  focus:ring-[#67a2e1] text-black h-12 md:h-14 w-full focus:outline-none pl-14 md:pl-16 pr-8 md:pr-12 rounded-xl text-sm md:text-lg transition duration-200"
                         placeholder="Search for Clinical Trials | More details for better results"
                         value={general}
                         onChange={(e) => setGeneral(e.target.value)}

@@ -28,6 +28,7 @@ type Trial = {
   pi: string;
   osu_id: string;
   rel_message: string;
+  rel_score_l: string;
 };
 
 
@@ -175,19 +176,57 @@ const Trials = ({ params, searchParams }: { params: { id: string }, searchParams
 
             <div className="flex items-center mb-4">
               {/* Displaying Phase and Treatment Type */}
+
+              {trial.rel_score_l && (
+                <div
+                  className={`rounded-md px-2 py-1 flex mr-3 items-center truncate ${trial.rel_score_l === "Highly Relevant"
+                      ? "bg-[#b5f979c2]"
+                      : trial.rel_score_l === "Relevant"
+                        ? "bg-[#d0faabc2]"
+                        : trial.rel_score_l === "Somewhat Relevant"
+                          ? "bg-yellow-200"
+                          : "bg-blue-200" // default color
+                    }`}
+                >
+                  <FaHandHoldingMedical
+                    className={`mr-1 text-[0.63rem] md:text-[0.75rem] flex-shrink-0 ${trial.rel_score_l === "Highly Relevant"
+                        ? "text-green-700"
+                        : trial.rel_score_l === "Relevant"
+                          ? "text-[#305411c2]"
+                          : trial.rel_score_l === "Somewhat Relevant"
+                            ? "text-yellow-700"
+                            : "text-blue-900" // default color
+                      }`}
+                  />
+                  <span
+                    className={`${trial.rel_score_l === "Highly Relevant"
+                        ? "text-green-700"
+                        : trial.rel_score_l === "Relevant"
+                          ? "text-[#305411c2]"
+                          : trial.rel_score_l === "Somewhat Relevant"
+                            ? "text-yellow-700"
+                            : "text-blue-900" // default color
+                      } text-[0.63rem] font-semibold md:text-sm text-ellipsis overflow-hidden`}
+                  >{trial.rel_score_l}</span>
+
+
+                </div>
+              )}
               <div className="rounded-md px-2 py-1 flex mr-3 items-center bg-pink-200 ">
                 <FaRegClock className="mr-1 text-[0.63rem] md:text-[0.75rem] text-orange-800" />
-                <span className="text-pink-800 text-[0.63rem] md:text-sm">Phase: {trial.phase}</span>
+                <span className="text-pink-800  text-[0.63rem] md:text-sm">Phase: {trial.phase}</span>
               </div>
 
-              <div className="rounded-md px-2 py-1 flex mr-3 items-center bg-blue-200 truncate">
-                <FaHandHoldingMedical className="mr-1 text-[0.63rem] md:text-[0.75rem] text-blue-900 flex-shrink-0" />
-                <span className="text-blue-900 text-[0.63rem] md:text-sm text-ellipsis overflow-hidden">Type: {trial.treatment_type}</span>
+
+              <div className="rounded-md px-2 py-1 flex items-center bg-purple-200">
+                <MdOutlinePersonPinCircle className="mr-1 text-[0.8rem] md:text-[1.2rem] text-purple-900" />
+                <span className="text-purple-900 text-[0.63rem] md:text-sm">PI: {trial.pi}</span>
               </div>
+
             </div>
-
+            {/*
             <div className="flex items-center mb-9">
-              {/* Enrollment and PI */}
+              
               <div className="rounded-md px-2 py-1 flex mr-3 items-center bg-yellow-200">
                 <HiOutlineUserGroup className="mr-1 text-yellow-800 text-[0.63rem] md:text-[0.9rem]" />
                 <span className="text-yellow-800 text-[0.63rem] md:text-sm">Enrollment: {trial.enrollment}</span>
@@ -197,27 +236,26 @@ const Trials = ({ params, searchParams }: { params: { id: string }, searchParams
                 <span className="text-purple-900 text-[0.63rem] md:text-sm">PI: {trial.pi}</span>
               </div>
             </div>
-
+*/}
             <div className="flex items-center justify-between mb-0">
-            {trial.rel_message && (     
-  <button
-    onClick={() => toggleAccordion1(index)} // Open only the clicked accordion
-    className="bg-[#2e2e2e] hover:scale-90 hover:bg-[#040404] cursor-pointer transition-all duration-200 ease-in-out text-white font-semibold py-2 px-3 text-sm md:text-[15px] rounded-md focus:outline-none"
-  >
-    Relevance {isAccordionOpen1 === index ? "-" : "+"}
-  </button>
+              <button
+                onClick={() => toggleAccordion1(index)} // Open only the clicked accordion
+                className={`bg-[#2e2e2e] hover:scale-90 hover:bg-[#040404] cursor-pointer transition-all duration-200 ease-in-out text-white font-semibold py-2 px-3 text-sm md:text-[15px] rounded-md focus:outline-none ${trial.rel_message ? "visible" : "invisible"
+                  }`}
+              >
+                Relevance {isAccordionOpen1 === index ? "-" : "+"}
+              </button>
+
+              <div className="absolute right-4">
+                <ViewButton NCTID={trial.NCTID} />
+              </div>
+            </div>
+
+            {isAccordionOpen1 === index && (
+              <div className='bg-gray-200/50 px-3 mt-5 rounded-lg'>
+                <p className="text-xs md:text-sm text-gray-600 py-2">{trial.rel_message}</p>
+              </div>
             )}
-
-  <div className="absolute right-4">    
-  <ViewButton NCTID={trial.NCTID} />
-  </div>
-</div>
-
-{isAccordionOpen1 === index && (
-  <div className='bg-gray-200/50 px-3 mt-5 rounded-lg'>
-  <p className="text-xs md:text-sm text-gray-600 py-2">{trial.rel_message}</p> 
-  </div>
-)}
           </div>
         ))}
 
