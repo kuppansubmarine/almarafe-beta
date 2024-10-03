@@ -19,6 +19,7 @@ import toast, { Toaster } from "react-hot-toast";
 import AnalyzingPage from "./Analyzing";
 import ErrorPage from "./Error";
 import Popup from "@/components/Popup";
+import Feedback from "./Feedback";
 
 const InputChat = () => {
   // page states
@@ -49,14 +50,14 @@ const InputChat = () => {
   const [protocolID, setProtocolID] = useState("");
   const [intervention, setIntervention] = useState("");
   const [drug, setDrug] = useState("");
-  const [phases, setPhases] = useState<string[]>([]);
+  const [phases, setPhases] = useState("");
   const [allowSubmit, setAllowSubmit] = useState(false);
   const [excludedTherapy, setExcludedTherapy] = useState("");
   const [excludedTherapies, setExcludedTherapies] = useState<string[]>([]);
   const [priorTherapy, setPriorTherapy] = useState("");
   const [priorTherapies, setPriorTherapies] = useState<string[]>([]);
-  const [relapsed, setRelapsed] = useState(false);
-  const [refractory, setRefractory] = useState(false);
+  const [relapsed, setRelapsed] = useState('null');
+  const [refractory, setRefractory] = useState('null');
   const [healthProblems, setHealthProblems] = useState("");
 
   useEffect(() => {
@@ -99,6 +100,12 @@ const InputChat = () => {
       topRef.current.scrollIntoView({ behavior: "smooth" });
     }
   };
+
+
+const handleRadioClick = (value: any, stateSetter: { (value: React.SetStateAction<string>): void; (value: React.SetStateAction<string>): void; (value: React.SetStateAction<string>): void; (value: React.SetStateAction<string>): void; (arg0: (prevRelapsed: any) => any): void; }) => {
+  // Toggle between the value and null (deselect)
+  stateSetter((prevRelapsed) => prevRelapsed === value ? 'null' : value);
+};
 
   const handleSexSelection = (selectedSex: string) => {
     setSex(selectedSex);
@@ -285,12 +292,12 @@ const InputChat = () => {
                           <p className="text-sm sm:text-md">Patient Mode</p>
                         </button>
                         <button
-                        className="ml-1 max-w-[110px] md:ml-2 md:mt-0 flex items-center content-center text-white bg-[#67a2e1] hover:bg-[#5a91c4] p-2 rounded-lg"
+                        className="ml-1 max-w-[300px] md:ml-2 md:mt-0 flex items-center content-center text-white bg-[#67a2e1] hover:bg-[#5a91c4] p-2 rounded-lg"
                         
                         onClick={() => {setIsFilterOpen(true), setUserType("Physician");}}
                       >
                         <FaSearch className=" mr-2 text-sm flex-shrink-0 flex-grow-0" /> 
-                        <p className="flex items-center content-center text-sm sm:text-md">Advanced</p>
+                        <p className="flex items-center content-center text-sm sm:text-md">For Healthcare Professionals</p>
                       </button>
                       </div>
                     </div>
@@ -353,7 +360,7 @@ const InputChat = () => {
           <div className="p-4 flex justify-between items-center shadow">
             <h2 className="text-lg font-semibold flex items-center gap-2">
               <MdTune className="text-2xl" />
-              Advanced Search
+              For Healthcare Professionals
             </h2>
             <button
   onClick={() => {
@@ -401,24 +408,16 @@ const InputChat = () => {
               />
             </div>
 
-            <label className="text-sm font-medium text-gray-700">Phase</label>
-            <div className="flex flex-row flex-wrap gap-2 mb-5">
-                        {["I", "II", "III"].map(
-                          (treatment, key) => (
-                            <div className="flex w-fit px-2" key={key}>
-                            <label key={treatment} className="flex items-center">
-                              <input
-                                type="checkbox"
-                                className="form-checkbox"
-                                checked={phases.includes(treatment)}
-                                onChange={() => handleTreatmentTypeSelection(treatment, setPhases)}
-                              />
-                              <span className="flex ml-2">Phase {treatment}</span>
-                            </label>
-                            </div>
-                          )
-                        )}
-                        </div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700">Phase</label>
+              <input
+                type="text"
+                className="mt-1 p-2 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                placeholder="ex. III or 1b/1a"
+                value={phases}
+                onChange={(e) => setPhases(e.target.value)}
+              />
+            </div>
                         
                         
 
@@ -522,14 +521,24 @@ const InputChat = () => {
 <label className="text-sm font-medium text-gray-700">Relapsed?</label>
 <div className="flex flex-row flex-wrap gap-2 mb-5">
   <div className="flex w-fit px-2">
-    <label className="flex items-center">
+  <label className="flex items-center">
       <input
-        onChange={(e) => setRelapsed(e.target.checked)} // Correctly handle checkbox state
-        type="checkbox"
-        className="form-checkbox"
-        checked={relapsed} // Bind the checkbox to the `relapsed` state
+        onClick={() => handleRadioClick('true', setRelapsed)} // Toggles to true or deselect
+        type="radio"
+        className="form-radio"
+        checked={relapsed === 'true'} // Checks if refractory is true
       />
-      <span className="flex ml-2">Yes</span> {/* Display label based on state */}
+      <span className="ml-2">Yes</span>
+    </label>
+    
+    <label className="flex items-center ml-4">
+      <input
+        onClick={() => handleRadioClick('false', setRelapsed)} // Toggles to false or deselect
+        type="radio"
+        className="form-radio"
+        checked={relapsed === 'false'} // Checks if refractory is false
+      />
+      <span className="ml-2">No</span>
     </label>
   </div>
 </div>
@@ -539,14 +548,24 @@ const InputChat = () => {
 <label className="text-sm font-medium text-gray-700">Refractory?</label>
 <div className="flex flex-row flex-wrap gap-2 mb-5">
   <div className="flex w-fit px-2">
-    <label className="flex items-center">
+  <label className="flex items-center">
       <input
-        onChange={(e) => setRefractory(e.target.checked)} // Correctly handle checkbox state
-        type="checkbox"
-        className="form-checkbox"
-        checked={refractory} // Bind the checkbox to the `relapsed` state
+        onClick={() => handleRadioClick('true', setRefractory)} // Toggles to true or deselect
+        type="radio"
+        className="form-radio"
+        checked={refractory === 'true'} // Checks if refractory is true
       />
-      <span className="flex ml-2">Yes</span> {/* Display label based on state */}
+      <span className="ml-2">Yes</span>
+    </label>
+    
+    <label className="flex items-center ml-4">
+      <input
+        onClick={() => handleRadioClick('false', setRefractory)} // Toggles to false or deselect
+        type="radio"
+        className="form-radio"
+        checked={refractory === 'false'} // Checks if refractory is false
+      />
+      <span className="ml-2">No</span>
     </label>
   </div>
 </div>
@@ -585,6 +604,7 @@ const InputChat = () => {
                 onChange={(e) => setPI(e.target.value)}
               />
             </div>
+            <Feedback />
             </div>
             
 
