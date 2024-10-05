@@ -184,7 +184,7 @@ const handleRadioClick = (value: any, stateSetter: { (value: React.SetStateActio
 
       // make actual request
       setIsLoading(true);
-      const response = await fetch("http://127.0.0.1:5000/api/search", {
+      const response = await fetch("https://almarabeta.azurewebsites.net/api/search", {
         method: "POST",
         credentials: "include",
         headers: {
@@ -297,7 +297,7 @@ const handleRadioClick = (value: any, stateSetter: { (value: React.SetStateActio
                         onClick={() => {setIsFilterOpen(true), setUserType("Physician");}}
                       >
                         <FaSearch className=" mr-2 text-sm flex-shrink-0 flex-grow-0" /> 
-                        <p className="flex items-center content-center text-sm sm:text-md">For Healthcare Professionals</p>
+                        <p className="flex items-center content-center text-sm sm:text-md">Advanced</p>
                       </button>
                       </div>
                     </div>
@@ -328,7 +328,7 @@ const handleRadioClick = (value: any, stateSetter: { (value: React.SetStateActio
                           <IoSearchCircle className=" h-5 w-5" />
                           <span className="font-semibold text-sm">Example</span>
                         </div>
-                        <h2 className="mt-3 text-sm">Give me Phase I or Phase II trials for Acute myeloid leukemia, relapsed after bone marrow transplant, with FLT3-ITD mutation and secondary resistance to midostaurin. Interested in trials involving novel FLT3 inhibitors or combination therapies targeting secondary resistance mechanisms.</h2>
+                        <h2 className="mt-3 text-sm">Give me <b>Phase I or Phase II</b> trials for <b>Acute myeloid leukemia</b>, <b>relapsed</b> after bone marrow transplant, with <b>FLT3-ITD mutation</b> and <b>secondary resistance to midostaurin</b>. Interested in trials involving novel <b>FLT3 inhibitors</b> or <b>combination therapies</b> targeting secondary resistance mechanisms.</h2>
                       </div>
                     </div>
                   </div>
@@ -360,7 +360,7 @@ const handleRadioClick = (value: any, stateSetter: { (value: React.SetStateActio
           <div className="p-4 flex justify-between items-center shadow">
             <h2 className="text-lg font-semibold flex items-center gap-2">
               <MdTune className="text-2xl" />
-              For Healthcare Professionals
+              Advanced
             </h2>
             <button
   onClick={() => {
