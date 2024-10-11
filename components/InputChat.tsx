@@ -308,7 +308,7 @@ const InputChat = () => {
                       <div
                         className="flex flex-col mt-12 bg-slate-50 rounded-xl p-4 max-w-120 hover-effect"
                         onClick={() => {
-                          setGeneral("I’m looking for clinical trials as a 47-year-old woman with advanced breast cancer that has come back after chemotherapy. My current treatment includes hormone therapy, but I’m interested in new treatments that could help alongside it.")
+                          setGeneral("I’m looking for clinical trials as a 47 year old woman with advanced breast cancer that has come back after chemotherapy. My current treatment includes hormone therapy, but I’m interested in new treatments that could help alongside it.")
                           setAllowSubmit(true);
                         }
                         }
