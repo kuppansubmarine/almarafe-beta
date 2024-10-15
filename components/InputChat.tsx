@@ -18,9 +18,7 @@ import { useRouter } from "next/navigation";
 import toast, { Toaster } from "react-hot-toast";
 import AnalyzingPage from "./Analyzing";
 import ErrorPage from "./Error";
-import Popup from "@/components/Popup";
 import Feedback from "./Feedback";
-
 const InputChat = () => {
   // page states
   const [step, setStep] = useState(0);
@@ -45,12 +43,12 @@ const InputChat = () => {
   const [previousCancerType, setPreviousCancerType] = useState("");
   const [previousCancerStage, setPreviousCancerStage] = useState("");
   const [treatmentTypes, setTreatmentTypes] = useState<string[]>([]);
+  const [phases, setPhases] = useState<string[]>([]);
   const [otherTreatment, setOtherTreatment] = useState("");
   const [PI, setPI] = useState("");
   const [protocolID, setProtocolID] = useState("");
   const [intervention, setIntervention] = useState("");
   const [drug, setDrug] = useState("");
-  const [phases, setPhases] = useState("");
   const [allowSubmit, setAllowSubmit] = useState(false);
   const [excludedTherapy, setExcludedTherapy] = useState("");
   const [excludedTherapies, setExcludedTherapies] = useState<string[]>([]);
@@ -131,7 +129,12 @@ const handleRadioClick = (value: any, stateSetter: { (value: React.SetStateActio
   }
 
   const HandlePatientMode = () => {
-    router.push(`/patient`);
+    // localStorage.setItem("condition", "");
+    // localStorage.setItem("age", "");
+    // localStorage.setItem("stage", "");
+    // localStorage.setItem("sex", "");
+    // localStorage.setItem("state", "");
+    router.push(`/patientinfo`);
   };
   // massive function to submit patient information from patient or phisician mode
   const handleSubmit = async () => {
@@ -398,7 +401,7 @@ const handleRadioClick = (value: any, stateSetter: { (value: React.SetStateActio
               />
             </div>
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">Intervention</label>
+              <label className="block text-sm font-medium text-gray-700">Intervention Type</label>
               <input
                 type="text"
                 className="mt-1 p-2 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
@@ -408,16 +411,24 @@ const handleRadioClick = (value: any, stateSetter: { (value: React.SetStateActio
               />
             </div>
 
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">Phase</label>
-              <input
-                type="text"
-                className="mt-1 p-2 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                placeholder="ex. III or 1b/1a"
-                value={phases}
-                onChange={(e) => setPhases(e.target.value)}
-              />
-            </div>
+            <label className="text-sm font-medium text-gray-700">Phase</label>
+            <div className="flex flex-row flex-wrap gap-2 mb-5">
+                        {["I", "II", "III"].map(
+                          (treatment, key) => (
+                            <div className="flex w-fit px-2" key={key}>
+                            <label key={treatment} className="flex items-center">
+                              <input
+                                type="checkbox"
+                                className="form-checkbox"
+                                checked={phases.includes(treatment)}
+                                onChange={() => handleTreatmentTypeSelection(treatment, setPhases)}
+                              />
+                              <span className="flex ml-2">Phase {treatment}</span>
+                            </label>
+                            </div>
+                          )
+                        )}
+                        </div>
                         
                         
 
@@ -475,12 +486,12 @@ const handleRadioClick = (value: any, stateSetter: { (value: React.SetStateActio
 </div>
 
             <div className="mb-4">
-  <label className="block text-sm font-medium text-gray-700">Prior Lines of Therapy</label>
+  <label className="block text-sm font-medium text-gray-700">Prior Lines of Therapy Administered</label>
   <div className="flex items-center content-center">
     <input
       type="text"
       className="mt-1 p-2 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-      placeholder="ex. Chemotherapy"
+      placeholder="enter number"
       value={priorTherapy}
       onChange={(e) => setPriorTherapy(e.target.value)}
       onKeyDown={(e) => {

@@ -4,7 +4,6 @@ import { CheckCircleIcon, SparklesIcon, ExclamationCircleIcon, InformationCircle
 import ErrorPage from '@/components/Error';
 import LoadingPage from '@/components/Analyzing';
 import PrintButton from '@/components/PrintButton';
-import Popup from '@/components/Popup';
 
 
 
@@ -120,7 +119,6 @@ const TrialPage = async ({ params }: { params: { id: string; nctid: string } }) 
 
     return (
         <>
-        <Popup/>
         <div className="min-h-screen bg-gray-50 p-8 flex items-start justify-center">
 
             <div className="p-1 md:p-5 lg:p-8 md:bg-white md:border-2 rounded-lg max-w-6xl w-full">
