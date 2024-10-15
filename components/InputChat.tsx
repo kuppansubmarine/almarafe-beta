@@ -303,7 +303,7 @@ const InputChat = () => {
                           onClick={() => { setIsFilterOpen(true), setUserType("Physician"); }}
                         >
                           <FaSearch className=" mr-2 text-sm flex-shrink-0 flex-grow-0" />
-                          <p className="flex items-center content-center text-sm sm:text-md">Advanced</p>
+                          <p className="flex items-center content-center text-sm sm:text-md">Health Care Professionals</p>
                         </button>
                       </div>
                     </div>
@@ -414,6 +414,7 @@ const InputChat = () => {
             </div>
 
             <label className="text-sm font-medium text-gray-700">Phase</label>
+            
             <div className="flex flex-row flex-wrap gap-2 mb-5">
                         {["I", "II", "III"].map(
                           (treatment, key) => (
