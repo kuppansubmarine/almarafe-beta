@@ -27,7 +27,7 @@ const InputChat = () => {
   const router = useRouter();
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [isFilterOpen, setIsFilterOpen] = useState(false); 
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
   const topRef = useRef<HTMLDivElement>(null);
 
   // search states
@@ -100,10 +100,10 @@ const InputChat = () => {
   };
 
 
-const handleRadioClick = (value: any, stateSetter: { (value: React.SetStateAction<string>): void; (value: React.SetStateAction<string>): void; (value: React.SetStateAction<string>): void; (value: React.SetStateAction<string>): void; (arg0: (prevRelapsed: any) => any): void; }) => {
-  // Toggle between the value and null (deselect)
-  stateSetter((prevRelapsed) => prevRelapsed === value ? 'null' : value);
-};
+  const handleRadioClick = (value: any, stateSetter: { (value: React.SetStateAction<string>): void; (value: React.SetStateAction<string>): void; (value: React.SetStateAction<string>): void; (value: React.SetStateAction<string>): void; (arg0: (prevRelapsed: any) => any): void; }) => {
+    // Toggle between the value and null (deselect)
+    stateSetter((prevRelapsed) => prevRelapsed === value ? 'null' : value);
+  };
 
   const handleSexSelection = (selectedSex: string) => {
     setSex(selectedSex);
@@ -179,7 +179,7 @@ const handleRadioClick = (value: any, stateSetter: { (value: React.SetStateActio
         refractory: refractory,
 
 
-        
+
 
         general: general.trim(),
       };
@@ -187,7 +187,7 @@ const handleRadioClick = (value: any, stateSetter: { (value: React.SetStateActio
 
       // make actual request
       setIsLoading(true);
-      const response = await fetch("http://127.0.0.1:5000/api/search", {
+      const response = await fetch("https://almarabeta.azurewebsites.net/api/search", {
         method: "POST",
         credentials: "include",
         headers: {
@@ -260,8 +260,8 @@ const handleRadioClick = (value: any, stateSetter: { (value: React.SetStateActio
                       </div>
                       <input
                         type="text"
-                        className="bg-white  border-2  focus:border-[#67a2e1] focus:ring-2  focus:ring-[#67a2e1] text-black h-12 md:h-14 w-full focus:outline-none pl-14 md:pl-16 pr-8 md:pr-12 rounded-xl text-sm md:text-lg transition duration-200"
-                        placeholder="Search for Clinical Trials | More details for better results"
+                        className="bg-white  border-2  focus:border-[#67a2e1] focus:ring-2  focus:ring-[#67a2e1] text-black h-12 md:h-14 w-full focus:outline-none pl-12 md:pl-12 pr-8 md:pr-12 rounded-xl text-sm md:text-lg transition duration-200"
+                        placeholder="Search for Clinical Trials..."
                         value={general}
                         onChange={(e) => setGeneral(e.target.value)}
                         onKeyDown={(e) => {
@@ -275,14 +275,17 @@ const handleRadioClick = (value: any, stateSetter: { (value: React.SetStateActio
                         }}
                       />
 
-                      {general && (
-                        <div
-                          className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
-                          onClick={handleSubmit}
-                        >
-                          <MagnifyingGlassIcon className="h-5 md:h-6 w-5 md:w-6 text-blue-500" />
-                        </div>
-                      )}
+                      <div
+                        className={`absolute inset-y-0 right-0 pr-3 flex items-center ${general ? 'cursor-pointer' : 'cursor-not-allowed'
+                          }`}
+                        onClick={general ? handleSubmit : () => { }}
+                      >
+                        <MagnifyingGlassIcon
+                          className={`h-5 font-bold md:h-6 w-5 md:w-6 ${general ? 'text-blue-500' : 'text-gray-400'
+                            }`}
+                        />
+                      </div>
+
                     </div>
                     <div className="flex flex-col md:flex-row md:gap-4">
                       <div className="flex gap-4 md:gap-6 content-center items-center">
@@ -295,43 +298,43 @@ const handleRadioClick = (value: any, stateSetter: { (value: React.SetStateActio
                           <p className="text-sm sm:text-md">Patient Mode</p>
                         </button>
                         <button
-                        className="ml-1 max-w-[300px] md:ml-2 md:mt-0 flex items-center content-center text-white bg-[#67a2e1] hover:bg-[#5a91c4] p-2 rounded-lg"
-                        
-                        onClick={() => {setIsFilterOpen(true), setUserType("Physician");}}
-                      >
-                        <FaSearch className=" mr-2 text-sm flex-shrink-0 flex-grow-0" /> 
-                        <p className="flex items-center content-center text-sm sm:text-md">For Healthcare Professionals</p>
-                      </button>
+                          className="ml-1 max-w-[300px] md:ml-2 md:mt-0 flex items-center content-center text-white bg-[#67a2e1] hover:bg-[#5a91c4] p-2 rounded-lg"
+
+                          onClick={() => { setIsFilterOpen(true), setUserType("Physician"); }}
+                        >
+                          <FaSearch className=" mr-2 text-sm flex-shrink-0 flex-grow-0" />
+                          <p className="flex items-center content-center text-sm sm:text-md">Advanced</p>
+                        </button>
                       </div>
                     </div>
                     <div className="flex gap-5">
-                    <div
-          className="flex flex-col mt-12 bg-slate-50 rounded-xl p-4 max-w-120 hover-effect"
-          onClick={() => {
-            setGeneral("Show me trials for Stage 4 non-small cell lung cancer, positive for EGFR exon 19 deletion mutation, previously treated with osimertinib and chemotherapy. Looking for trials with alternative targeted therapies for EGFR-mutant tumors or immunotherapies with minimal off-target effects.")
-            setAllowSubmit(true);
-            }
-          }
-        >
+                      <div
+                        className="flex flex-col mt-12 bg-slate-50 rounded-xl p-4 max-w-120 hover-effect"
+                        onClick={() => {
+                          setGeneral("I’m looking for clinical trials as a 47 year old woman with advanced breast cancer that has come back after chemotherapy. My current treatment includes hormone therapy, but I’m interested in new treatments that could help alongside it.")
+                          setAllowSubmit(true);
+                        }
+                        }
+                      >
                         <div className="flex gap-2 items-center">
                           <IoSearchCircle className=" h-5 w-5" />
                           <span className="font-semibold text-sm">Example</span>
                         </div>
-                        <h2 className="mt-3 text-sm">Show me trials for Stage 4 non-small cell lung cancer, positive for EGFR exon 19 deletion mutation, previously treated with osimertinib and chemotherapy. Looking for trials with alternative targeted therapies for EGFR-mutant tumors or immunotherapies with minimal off-target effects.</h2>
+                        <h2 className="mt-3 text-sm">I’m looking for clinical trials as a <b>47-year-old woman</b> with <b>advanced breast cancer</b> that has come back after <b>chemotherapy</b>. My current treatment includes <b>hormone therapy</b>, but I’m interested in new treatments that could help alongside it. I’m hoping to find options that may better <b>control the cancer</b>.</h2>
                       </div>
                       <div
-          className="flex flex-col mt-12 bg-slate-50 rounded-xl p-4 max-w-120 hover-effect"
-          onClick={() => {
-            setGeneral("Give me Phase I or Phase II trials for Acute myeloid leukemia, relapsed after bone marrow transplant, with FLT3-ITD mutation and secondary resistance to midostaurin. Interested in trials involving novel FLT3 inhibitors or combination therapies targeting secondary resistance mechanisms.")
-            setAllowSubmit(true);
-            }
-          }
-        >
+                        className="flex flex-col mt-12 bg-slate-50 rounded-xl p-4 max-w-120 hover-effect"
+                        onClick={() => {
+                          setGeneral("Give me Phase I or Phase II trials for Acute myeloid leukemia, relapsed after bone marrow transplant, with FLT3-ITD mutation and secondary resistance to midostaurin. Interested in trials involving novel FLT3 inhibitors or combination therapies targeting secondary resistance mechanisms.")
+                          setAllowSubmit(true);
+                        }
+                        }
+                      >
                         <div className="flex gap-2 items-center">
                           <IoSearchCircle className=" h-5 w-5" />
                           <span className="font-semibold text-sm">Example</span>
                         </div>
-                        <h2 className="mt-3 text-sm">Give me Phase I or Phase II trials for Acute myeloid leukemia, relapsed after bone marrow transplant, with FLT3-ITD mutation and secondary resistance to midostaurin. Interested in trials involving novel FLT3 inhibitors or combination therapies targeting secondary resistance mechanisms.</h2>
+                        <h2 className="mt-3 text-sm">Give me <b>Phase I or Phase II</b> trials for <b>Acute myeloid leukemia</b>, <b>relapsed</b> after bone marrow transplant, with <b>FLT3-ITD mutation</b> and <b>secondary resistance to midostaurin</b>. Interested in trials involving novel <b>FLT3 inhibitors</b> or <b>combination therapies</b> targeting secondary resistance mechanisms.</h2>
                       </div>
                     </div>
                   </div>
@@ -339,10 +342,10 @@ const handleRadioClick = (value: any, stateSetter: { (value: React.SetStateActio
               )}
 
 
-              </div>
             </div>
-      
-          
+          </div>
+
+
         )}
       </div>
 
@@ -355,32 +358,31 @@ const handleRadioClick = (value: any, stateSetter: { (value: React.SetStateActio
       {isFilterOpen && (
         <div
           id="filter-sidebar"
-          className={`fixed top-0 right-0 h-full bg-white shadow-xl z-50 transform ${
-            isFilterOpen ? 'translate-x-0' : 'translate-x-full'
-          } transition-transform duration-300 ease-in-out`}
+          className={`fixed top-0 right-0 h-full bg-white shadow-xl z-50 transform ${isFilterOpen ? 'translate-x-0' : 'translate-x-full'
+            } transition-transform duration-300 ease-in-out`}
           style={{ width: '375px' }}
         >
           <div className="p-4 flex justify-between items-center shadow">
             <h2 className="text-lg font-semibold flex items-center gap-2">
               <MdTune className="text-2xl" />
-              For Healthcare Professionals
+              Advanced
             </h2>
             <button
-  onClick={() => {
-    setProtocolID('');
-    setPI('');
-    setIsFilterOpen(false);
-    setUserType(""); // Reset userType when the filter is closed
-  }}
-> 
-  <FaTimes /> 
-</button>
+              onClick={() => {
+                setProtocolID('');
+                setPI('');
+                setIsFilterOpen(false);
+                setUserType(""); // Reset userType when the filter is closed
+              }}
+            >
+              <FaTimes />
+            </button>
           </div>
 
 
           <div className="p-4 overflow-y-auto h-4/5">
 
-          <div className="mb-4">
+            <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700">Condition</label>
               <input
                 type="text"
@@ -444,46 +446,45 @@ const handleRadioClick = (value: any, stateSetter: { (value: React.SetStateActio
             </div>
 
             <div className="mb-4">
-  <label className="block text-sm font-medium text-gray-700">Excluded Therapies</label>
-  <div className="flex items-center content-center">
-    <input
-      type="text"
-      className="mt-1 p-2 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-      placeholder="ex. Chemotherapy"
-      value={excludedTherapy}
-      onChange={(e) => setExcludedTherapy(e.target.value)}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" && excludedTherapy.length > 0) {
-          handleAddItem(excludedTherapy, setExcludedTherapy, setExcludedTherapies);
-        }
-      }}
-    />
-    <button
-      onClick={() => excludedTherapy.length > 0 && handleAddItem(excludedTherapy, setExcludedTherapy, setExcludedTherapies)}
-      className={`w-20 h-8 rounded-md shadow-sm transition-colors duration-200 m-2 ${
-        excludedTherapy.length > 0
-          ? 'bg-[#67a2e1] text-white hover:bg-[#5590ce]'
-          : 'bg-gray-400 text-gray-200 cursor-not-allowed'
-      }`}
-    >
-      Add
-    </button>
-  </div>
-  <div className="flex flex-wrap gap-2 mt-3"> {/* Added flex-wrap and gap for better layout */}
-    {excludedTherapies.map((treatment, key) => (
-      <div
-        className="flex justify-between items-center p-2 border rounded-md bg-gray-100"
-        key={key}
-        style={{ maxWidth: '280px' }} // Set a max width for wrapping
-      >
-        <p className="italic truncate pr-2">{treatment}</p> {/* Added truncate for long text */}
-        <p onClick={() => handleClose(treatment, setExcludedTherapies)} className="cursor-pointer ml-2">
-          <Image className="w-3 h-3 mr-2" src={im} alt="close" />
-        </p>
-      </div>
-    ))}
-  </div>
-</div>
+              <label className="block text-sm font-medium text-gray-700">Excluded Therapies</label>
+              <div className="flex items-center content-center">
+                <input
+                  type="text"
+                  className="mt-1 p-2 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  placeholder="ex. Chemotherapy"
+                  value={excludedTherapy}
+                  onChange={(e) => setExcludedTherapy(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && excludedTherapy.length > 0) {
+                      handleAddItem(excludedTherapy, setExcludedTherapy, setExcludedTherapies);
+                    }
+                  }}
+                />
+                <button
+                  onClick={() => excludedTherapy.length > 0 && handleAddItem(excludedTherapy, setExcludedTherapy, setExcludedTherapies)}
+                  className={`w-20 h-8 rounded-md shadow-sm transition-colors duration-200 m-2 ${excludedTherapy.length > 0
+                      ? 'bg-[#67a2e1] text-white hover:bg-[#5590ce]'
+                      : 'bg-gray-400 text-gray-200 cursor-not-allowed'
+                    }`}
+                >
+                  Add
+                </button>
+              </div>
+              <div className="flex flex-wrap gap-2 mt-3"> {/* Added flex-wrap and gap for better layout */}
+                {excludedTherapies.map((treatment, key) => (
+                  <div
+                    className="flex justify-between items-center p-2 border rounded-md bg-gray-100"
+                    key={key}
+                    style={{ maxWidth: '280px' }} // Set a max width for wrapping
+                  >
+                    <p className="italic truncate pr-2">{treatment}</p> {/* Added truncate for long text */}
+                    <p onClick={() => handleClose(treatment, setExcludedTherapies)} className="cursor-pointer ml-2">
+                      <Image className="w-3 h-3 mr-2" src={im} alt="close" />
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
 
             <div className="mb-4">
   <label className="block text-sm font-medium text-gray-700">Prior Lines of Therapy Administered</label>
@@ -527,72 +528,72 @@ const handleRadioClick = (value: any, stateSetter: { (value: React.SetStateActio
   </div>
 </div>
 
-<div className="flex w-full">
-<div className="w-full">
-<label className="text-sm font-medium text-gray-700">Relapsed?</label>
-<div className="flex flex-row flex-wrap gap-2 mb-5">
-  <div className="flex w-fit px-2">
-  <label className="flex items-center">
-      <input
-        onClick={() => handleRadioClick('true', setRelapsed)} // Toggles to true or deselect
-        type="radio"
-        className="form-radio"
-        checked={relapsed === 'true'} // Checks if refractory is true
-      />
-      <span className="ml-2">Yes</span>
-    </label>
-    
-    <label className="flex items-center ml-4">
-      <input
-        onClick={() => handleRadioClick('false', setRelapsed)} // Toggles to false or deselect
-        type="radio"
-        className="form-radio"
-        checked={relapsed === 'false'} // Checks if refractory is false
-      />
-      <span className="ml-2">No</span>
-    </label>
-  </div>
-</div>
-</div>
+            <div className="flex w-full">
+              <div className="w-full">
+                <label className="text-sm font-medium text-gray-700">Relapsed?</label>
+                <div className="flex flex-row flex-wrap gap-2 mb-5">
+                  <div className="flex w-fit px-2">
+                    <label className="flex items-center">
+                      <input
+                        onClick={() => handleRadioClick('true', setRelapsed)} // Toggles to true or deselect
+                        type="radio"
+                        className="form-radio"
+                        checked={relapsed === 'true'} // Checks if refractory is true
+                      />
+                      <span className="ml-2">Yes</span>
+                    </label>
 
-<div className="w-full">
-<label className="text-sm font-medium text-gray-700">Refractory?</label>
-<div className="flex flex-row flex-wrap gap-2 mb-5">
-  <div className="flex w-fit px-2">
-  <label className="flex items-center">
-      <input
-        onClick={() => handleRadioClick('true', setRefractory)} // Toggles to true or deselect
-        type="radio"
-        className="form-radio"
-        checked={refractory === 'true'} // Checks if refractory is true
-      />
-      <span className="ml-2">Yes</span>
-    </label>
-    
-    <label className="flex items-center ml-4">
-      <input
-        onClick={() => handleRadioClick('false', setRefractory)} // Toggles to false or deselect
-        type="radio"
-        className="form-radio"
-        checked={refractory === 'false'} // Checks if refractory is false
-      />
-      <span className="ml-2">No</span>
-    </label>
-  </div>
-</div>
-</div>
-</div>
+                    <label className="flex items-center ml-4">
+                      <input
+                        onClick={() => handleRadioClick('false', setRelapsed)} // Toggles to false or deselect
+                        type="radio"
+                        className="form-radio"
+                        checked={relapsed === 'false'} // Checks if refractory is false
+                      />
+                      <span className="ml-2">No</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div className="w-full">
+                <label className="text-sm font-medium text-gray-700">Refractory?</label>
+                <div className="flex flex-row flex-wrap gap-2 mb-5">
+                  <div className="flex w-fit px-2">
+                    <label className="flex items-center">
+                      <input
+                        onClick={() => handleRadioClick('true', setRefractory)} // Toggles to true or deselect
+                        type="radio"
+                        className="form-radio"
+                        checked={refractory === 'true'} // Checks if refractory is true
+                      />
+                      <span className="ml-2">Yes</span>
+                    </label>
+
+                    <label className="flex items-center ml-4">
+                      <input
+                        onClick={() => handleRadioClick('false', setRefractory)} // Toggles to false or deselect
+                        type="radio"
+                        className="form-radio"
+                        checked={refractory === 'false'} // Checks if refractory is false
+                      />
+                      <span className="ml-2">No</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
 
 
-<div className="mb-4">
-  <label className="block text-sm font-medium text-gray-700">Other health problems</label>
-  <textarea
-    className="mt-1 p-2 block w-full h-20 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-    placeholder="ex. Diabetes"
-    value={otherConditions}
-    onChange={(e) => setOtherConditions(e.target.value)}
-  />
-</div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700">Other health problems</label>
+              <textarea
+                className="mt-1 p-2 block w-full h-20 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                placeholder="ex. Diabetes"
+                value={otherConditions}
+                onChange={(e) => setOtherConditions(e.target.value)}
+              />
+            </div>
 
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700">Protocol Number</label>
@@ -616,30 +617,30 @@ const handleRadioClick = (value: any, stateSetter: { (value: React.SetStateActio
               />
             </div>
             <Feedback />
-            </div>
-            
+          </div>
 
-            {/* Handle search button for advanced search */}
 
-              <div className="h-full p-2"
-              style={{ boxShadow: "0 -4px 6px rgba(0, 0, 0, 0.1)" }}>
-                <button
-                  onClick={() => {
-                    if (protocolID && PI) {
-                      toast.error("Please search by either Protocol ID or PI, not both.");
-                      return;
-                    }
+          {/* Handle search button for advanced search */}
 
-                    handleSubmit(); 
-                    setIsFilterOpen(false);  
-                  }}
-                  className="w-full bg-[#67a2e1] text-white py-2 rounded-md shadow-sm hover:bg-[#5590ce] transition-colors duration-200"
-                >
-                  Search
-                </button>
-              </div>
-          
-          
+          <div className="h-full p-2"
+            style={{ boxShadow: "0 -4px 6px rgba(0, 0, 0, 0.1)" }}>
+            <button
+              onClick={() => {
+                if (protocolID && PI) {
+                  toast.error("Please search by either Protocol ID or PI, not both.");
+                  return;
+                }
+
+                handleSubmit();
+                setIsFilterOpen(false);
+              }}
+              className="w-full bg-[#67a2e1] text-white py-2 rounded-md shadow-sm hover:bg-[#5590ce] transition-colors duration-200"
+            >
+              Search
+            </button>
+          </div>
+
+
         </div>
       )}
 
