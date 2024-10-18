@@ -134,7 +134,7 @@ const InputChat = () => {
     // localStorage.setItem("stage", "");
     // localStorage.setItem("sex", "");
     // localStorage.setItem("state", "");
-    router.push(`/patientinfo`);
+    router.push(`/patient-general`);
   };
   // massive function to submit patient information from patient or phisician mode
   const handleSubmit = async () => {
@@ -493,7 +493,7 @@ const InputChat = () => {
     <input
       type="text"
       className="mt-1 p-2 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-      placeholder="enter number"
+      placeholder="enter therapy"
       value={priorTherapy}
       onChange={(e) => setPriorTherapy(e.target.value)}
       onKeyDown={(e) => {

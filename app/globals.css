@@ -52,7 +52,7 @@ body {
 }
 
 .button-group button {
-  border-radius: 1.5rem; /* Adjust this value to match the desired roundness */
+  border-radius: 0.2rem; /* Adjust this value to match the desired roundness */
   padding: 0.5rem 1rem; /* Ensure consistent padding */
   flex: 1;
   display: flex;
@@ -79,7 +79,7 @@ body {
 }
 
 .button-group button {
-  border-radius: 1.5rem; /* Adjust this value to match the desired roundness */
+  border-radius: 0.5rem; /* Adjust this value to match the desired roundness */
   padding: 0.5rem 1rem; /* Ensure consistent padding */
   flex: 1;
   display: flex;
