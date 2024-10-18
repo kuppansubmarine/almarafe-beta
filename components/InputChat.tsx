@@ -139,12 +139,12 @@ const InputChat = () => {
   // massive function to submit patient information from patient or phisician mode
   const handleSubmit = async () => {
     if (isFilterOpen) {
-      if (!(condition || protocolID || PI || drug || intervention || biomarkers)) {
-        toast.error("Please fill in at least one of the following:\n\nCondition, Biomarkers, Intervention, Study Drug, Protocol ID, PI");
+      if (!(condition || protocolID || PI)) {
+        toast.error("Please fill in at least one of the following:\n\nCondition, Protocol ID, PI");
         return;
       }
       if ((condition || intervention || biomarkers || drug) && protocolID) {
-        toast.error("You can only search by [Condition, Intervention, Biomarkers, Drug] or Protocol ID, not both!");
+        toast.error("You can only search by Condition or Protocol ID, not both!");
         return;
       }
     }
